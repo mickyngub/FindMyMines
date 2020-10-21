@@ -7,6 +7,7 @@ app.get("/", (req, res) => {
 });
 
 io.on("connection", (socket) => {
+  io.emit("received-connection", "YOU are connected to the server");
   console.log("a user has connected");
   socket.on("chat message", (msg) => {
     console.log("this is chat " + msg);
