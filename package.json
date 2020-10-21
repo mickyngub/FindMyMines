@@ -4,7 +4,10 @@
   "description": "Netcentric Architecture Project Micky-Pinn-Boss",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "nodemon index.js",
+    "client": "npm start --prefix findmymines-client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "author": "Pichaya Puttekulangkura",
   "license": "ISC",
@@ -13,6 +16,7 @@
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
+    "concurrently": "^5.3.0",
     "nodemon": "^2.0.6"
   }
 }
