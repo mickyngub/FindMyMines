@@ -5,7 +5,7 @@ import Grids from "./Components/Grids";
 import io from "socket.io-client";
 
 function App() {
-  const socket = io("https://localhost:8000");
+  const socket = io("http://localhost:8000");
 
   let onClickHandler = () => {
     socket.emit("chat message", "I hope this work");
