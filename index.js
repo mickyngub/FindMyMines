@@ -9,6 +9,11 @@ app.get("/", (req, res) => {
 io.on("connection", (socket) => {
   io.emit("received-connection", "YOU are connected to the server");
   console.log("a user has connected");
+  console.log(socket.client.conn.server.clientsCount + " users connected");
+  socket.on("name-event", (msg) => {
+    console.log("Your name is ", msg);
+    io.emit("name-event-sendback", msg);
+  });
   socket.on("chat message", (msg) => {
     console.log("this is chat " + msg);
   });
