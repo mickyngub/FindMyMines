@@ -5,9 +5,10 @@ import io from "socket.io-client";
 const socket = io("http://localhost:8000");
 
 const GamePage = ({ location }) => {
+  let namesOfConnectedUserFromServer = [];
   const [value, setValue] = useState("");
   const [name, setName] = useState("");
-
+  const [nameFromServer, setNameFromServer] = useState([]);
   let onClickHandler = () => {
     socket.emit("chat message", "I hope this work");
   };
@@ -22,19 +23,17 @@ const GamePage = ({ location }) => {
   };
 
   useEffect(() => {
-    socket.on("received-connection", (msg) => {
-      setValue(msg);
+    socket.on("name-of-users-connected", (nameObj) => {
+      setNameFromServer([...nameObj]);
+      console.log(nameObj);
     });
-    socket.on("name-event-sendback", (yourName) => {
-      setName(yourName + "sentback");
-    });
-  }, [name]);
-  console.log(location);
+    socket.emit("name-of-player", location.state.username);
+  }, []);
   return (
     <div>
       Hey welcome to FindMyMines by Micky-Pinn-Boss
       <h3>
-        YOUR ARE
+        Welcome to our game!! {` `}
         {location.state.username} !!
       </h3>
       <Grids />
@@ -45,7 +44,10 @@ const GamePage = ({ location }) => {
         <input onChange={onChangeHandler} type="text"></input>
         <button type="submit">Submit</button>
       </form>
-      <div>This is your name {name}</div>
+      <div>
+        name connected{" "}
+        {nameFromServer && nameFromServer.map((name) => name + " + ")}
+      </div>
     </div>
   );
 };
