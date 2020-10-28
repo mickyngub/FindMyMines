@@ -1,12 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 
-import { Link } from "react-router-dom";
-
-const NamePage = () => {
+const NamePage = ({ history }) => {
+  console.log(history);
+  const [username, setUserName] = useState("");
+  const onClickHandler = () => {
+    history.push("/GamePage", { id: 1, username });
+  };
   return (
     <div>
       <h3>What's your name?</h3>
-      <Link to="/GamePage">ENTER</Link>
+      <input
+        placeholder="Please Enter Your Name"
+        onChange={(e) => setUserName(e.target.value)}
+      ></input>
+
+      <button onClick={onClickHandler}>Go to GamePage</button>
     </div>
   );
 };

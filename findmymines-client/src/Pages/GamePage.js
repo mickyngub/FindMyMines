@@ -4,7 +4,7 @@ import io from "socket.io-client";
 
 const socket = io("http://localhost:8000");
 
-const GamePage = () => {
+const GamePage = ({ location }) => {
   const [value, setValue] = useState("");
   const [name, setName] = useState("");
 
@@ -29,9 +29,14 @@ const GamePage = () => {
       setName(yourName + "sentback");
     });
   }, [name]);
+  console.log(location);
   return (
     <div>
       Hey welcome to FindMyMines by Micky-Pinn-Boss
+      <h3>
+        YOUR ARE
+        {location.state.username} !!
+      </h3>
       <Grids />
       <ul id="messages"></ul>
       <div onClick={onClickHandler}>Send</div>

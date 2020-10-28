@@ -12,6 +12,7 @@ const App = () => {
       <Switch>
         <Route path="/" exact component={NamePage} />
         <Route path="/GamePage" exact component={GamePage} />
+        <Route path="/" render={() => <div>404 not found</div>} />
       </Switch>
     </BrowserRouter>
   );
