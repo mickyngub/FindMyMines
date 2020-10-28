@@ -24,10 +24,13 @@ const GamePage = ({ location }) => {
 
   useEffect(() => {
     socket.on("name-of-users-connected", (nameObj) => {
+      namesOfConnectedUserFromServer = [...nameObj];
       setNameFromServer([...nameObj]);
       console.log(nameObj);
     });
-    socket.emit("name-of-player", location.state.username);
+    if (nameFromServer.indexOf(location.state.username) == -1) {
+      socket.emit("name-of-player", location.state.username);
+    }
   }, []);
   return (
     <div>
@@ -46,7 +49,7 @@ const GamePage = ({ location }) => {
       </form>
       <div>
         name connected{" "}
-        {nameFromServer && nameFromServer.map((name) => name + " + ")}
+        {nameFromServer && nameFromServer.map((user) => user.name + " + ")}
       </div>
     </div>
   );

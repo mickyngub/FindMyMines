@@ -6,22 +6,27 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
 
-const userConnectedArray = [];
+let userConnectedArray = [];
 io.on("connection", (socket) => {
   io.emit("received-connection", "YOU are connected to the server");
   console.log("a user has connected");
+
   socket.on("name-of-player", (name) => {
-    userConnectedArray.push(name);
+    userConnectedArray.push({ name, id: socket.id });
     console.log("The user has connected the name is", name);
+    console.log("its socket id is", socket.id);
     io.emit("name-of-users-connected", userConnectedArray);
   });
+
   console.log(socket.client.conn.server.clientsCount + " users connected");
-  socket.on("name-event", (msg) => {
-    console.log("Your name is ", msg);
-    io.emit("name-event-sendback", msg);
-  });
-  socket.on("chat message", (msg) => {
-    console.log("this is chat " + msg);
+
+  socket.on("disconnect", () => {
+    console.log("what is this", socket.id);
+    console.log("a user disconnect");
+    userConnectedArray = userConnectedArray.filter((obj) => {
+      obj.id !== socket.id;
+    });
+    console.log(Object.keys(socket.rooms));
   });
 });
 
