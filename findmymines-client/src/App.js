@@ -1,48 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import "./App.css";
-import Grids from "./Components/Grids";
 
-import io from "socket.io-client";
-const socket = io("http://localhost:8000");
+import { BrowserRouter, Switch, Route } from "react-router-dom";
 
-function App() {
-  const [value, setValue] = useState("");
-  const [name, setName] = useState("");
+import GamePage from "./Pages/GamePage";
+import NamePage from "./Pages/NamePage";
 
-  let onClickHandler = () => {
-    socket.emit("chat message", "I hope this work");
-  };
-
-  let onSubmitHandler = (event) => {
-    socket.emit("name-event", name);
-    event.preventDefault();
-  };
-
-  let onChangeHandler = (e) => {
-    setName(e.target.value);
-  };
-  useEffect(() => {
-    socket.on("received-connection", (msg) => {
-      setValue(msg);
-    });
-    socket.on("name-event-sendback", (yourName) => {
-      setName(yourName + "sentback");
-    });
-  }, [name]);
+const App = () => {
   return (
-    <div className="App" style={{ marginTop: "5vh" }}>
-      Hey welcome to FindMyMines by Micky-Pinn-Boss
-      <Grids></Grids>
-      <ul id="messages"></ul>
-      <div onClick={onClickHandler}>Send</div>
-      <div>This is value {value}</div>
-      <form onSubmit={onSubmitHandler}>
-        <input onChange={onChangeHandler} type="text"></input>
-        <button type="submit">Submit</button>
-      </form>
-      <div>This is your name {name}</div>
-    </div>
+    <BrowserRouter>
+      <Switch>
+        <Route path="/" exact component={NamePage} />
+        <Route path="/GamePage" exact component={GamePage} />
+      </Switch>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;
