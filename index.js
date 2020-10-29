@@ -20,8 +20,9 @@ io.on("connection", (socket) => {
 
   console.log(socket.client.conn.server.clientsCount + " users connected");
 
-  socket.on("testGame", () => {
+  socket.on("bombLocation", (bombLocation) => {
     console.log("test game successful");
+    socket.broadcast.emit("bombFromServer", bombLocation);
   });
 
   socket.on("disconnect", () => {

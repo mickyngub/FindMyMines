@@ -7,24 +7,24 @@ import "./GamePage.css";
 const socket = io("http://localhost:8000");
 
 const GamePage = ({ location }) => {
-  let namesOfConnectedUserFromServer = [];
+  // let namesOfConnectedUserFromServer = [];
   const [status, setStatus] = useState(false);
   const [nameFromServer, setNameFromServer] = useState([]);
 
   useEffect(() => {
     socket.on("name-of-users-connected", (nameObj) => {
-      namesOfConnectedUserFromServer = [...nameObj];
+      // namesOfConnectedUserFromServer = [...nameObj];
       setNameFromServer([...nameObj]);
       console.log(nameObj);
       console.log(status);
       console.log(nameObj.length);
 
-      if (nameObj.length == 2) {
+      if (nameObj.length === 2) {
         setStatus(true);
         console.log(status);
       }
     });
-    if (nameFromServer.indexOf(location.state.username) == -1) {
+    if (nameFromServer.indexOf(location.state.username) === -1) {
       socket.emit("name-of-player", location.state.username);
     }
   }, []);

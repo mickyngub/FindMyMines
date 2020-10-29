@@ -13,10 +13,14 @@ const Game = ({ ready, socket }) => {
       arrayBombValue.push(bombValue);
     }
     setArrayRandom((prev) => (prev = arrayBombValue));
-    socket.emit("testGame");
+    socket.emit("bombLocation", arrayBombValue);
   };
 
   useEffect(() => {
+    socket.on("bombFromServer", (arrayBombLocation) => {
+      console.log("io.on received bombFromServer", arrayBombLocation);
+      setArrayRandom((prev) => (prev = arrayBombLocation));
+    });
     console.log("this is arrayRabndom", arrayRandom);
   }, [arrayRandom]);
   return (
