@@ -4,7 +4,7 @@ import Grid from "@material-ui/core/Grid";
 
 import "./Game.css";
 
-const Game = ({ ready }) => {
+const Game = ({ ready, socket }) => {
   let arrayBombValue = [];
   const [arrayRandom, setArrayRandom] = useState([]);
   const generateBomb = () => {
@@ -13,6 +13,7 @@ const Game = ({ ready }) => {
       arrayBombValue.push(bombValue);
     }
     setArrayRandom((prev) => (prev = arrayBombValue));
+    socket.emit("testGame");
   };
 
   useEffect(() => {

@@ -20,6 +20,10 @@ io.on("connection", (socket) => {
 
   console.log(socket.client.conn.server.clientsCount + " users connected");
 
+  socket.on("testGame", () => {
+    console.log("test game successful");
+  });
+
   socket.on("disconnect", () => {
     console.log("what is this", socket.id);
     console.log("a user disconnect");

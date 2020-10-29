@@ -35,7 +35,7 @@ const GamePage = ({ location }) => {
         Welcome to our game, {` `}
         {location.state.username} !!
       </h3>
-      <Game ready={status} />
+      <Game ready={status} socket={socket} />
       <h2>
         Players connected{" "}
         {nameFromServer && nameFromServer.map((user) => user.name + " + ")}
