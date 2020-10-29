@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./NamePage.css";
 
 const NamePage = ({ history }) => {
   console.log(history);
@@ -7,14 +8,20 @@ const NamePage = ({ history }) => {
     history.push("/GamePage", { id: 1, username });
   };
   return (
-    <div>
-      <h3>What's your name?</h3>
+    <div className="center-namepage">
+      <h3 style={{ width: "50vw", height: "10vh" }}>What's your name?</h3>
       <input
+        style={{ width: "50vw", height: "10vh" }}
         placeholder="Please Enter Your Name"
         onChange={(e) => setUserName(e.target.value)}
       ></input>
 
-      <button onClick={onClickHandler}>Go to GamePage</button>
+      <button
+        style={{ width: "50vw", height: "10vh" }}
+        onClick={onClickHandler}
+      >
+        Go to GamePage
+      </button>
     </div>
   );
 };

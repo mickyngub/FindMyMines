@@ -8,6 +8,7 @@ const socket = io("http://localhost:8000");
 
 const GamePage = ({ location }) => {
   let namesOfConnectedUserFromServer = [];
+  const [status, setStatus] = useState(false);
   const [nameFromServer, setNameFromServer] = useState([]);
 
   useEffect(() => {
@@ -15,6 +16,13 @@ const GamePage = ({ location }) => {
       namesOfConnectedUserFromServer = [...nameObj];
       setNameFromServer([...nameObj]);
       console.log(nameObj);
+      console.log(status);
+      console.log(nameObj.length);
+
+      if (nameObj.length == 2) {
+        setStatus(true);
+        console.log(status);
+      }
     });
     if (nameFromServer.indexOf(location.state.username) == -1) {
       socket.emit("name-of-player", location.state.username);
@@ -23,17 +31,16 @@ const GamePage = ({ location }) => {
   return (
     <div className="center">
       Hey welcome to FindMyMines by Micky-Pinn-Boss
-      <h3 className="center">
+      <h3>
         Welcome to our game!! {` `}
         {location.state.username} !!
       </h3>
-      <Game />
-      <div className="center">
-        <h2>
-          name connected{" "}
-          {nameFromServer && nameFromServer.map((user) => user.name + " + ")}
-        </h2>
-      </div>
+      <Game ready={status} />
+      <h2>
+        name connected{" "}
+        {nameFromServer && nameFromServer.map((user) => user.name + " + ")}
+        name from server length {nameFromServer.length}
+      </h2>
     </div>
   );
 };

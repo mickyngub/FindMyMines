@@ -5,7 +5,7 @@ import Grid from "@material-ui/core/Grid";
 
 import "./Game.css";
 
-const Game = () => {
+const Game = ({ ready }) => {
   let arrayAnother = [];
   let arrayNum = [];
   const [arrayRandom, setArrayRandom] = useState([]);
@@ -40,25 +40,29 @@ const Game = () => {
   };
 
   return (
-    <div>
-      <button onClick={generateBomb}>Start Game</button>
+    <div className="center">
+      <button
+        className={`start-button${ready ? "-yes" : "-no"}`}
+        onClick={generateBomb}
+      >
+        Start Game
+      </button>
+      {console.log("this is ready", ready)}
       <br />
-
       {arrayRandom}
       {arrayAnother.map((i) => i)}
-
-      <div style={{ textAlign: "center" }}>
+      <div className="game">
         {arrayRandom.map((i) => {
           if (i === 1) {
             return (
-              <Grid item xs={4} className="bomb">
-                this is a bomb
+              <Grid item className="bomb">
+                <h3>Bomb!</h3>
               </Grid>
             );
           } else {
             return (
-              <Grid item xs={4} className="empty">
-                this is a bomb
+              <Grid item className="empty">
+                <h3>not a bomb!</h3>
               </Grid>
             );
           }
