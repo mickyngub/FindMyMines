@@ -32,14 +32,14 @@ const GamePage = ({ location }) => {
     <div className="center">
       Hey welcome to FindMyMines by Micky-Pinn-Boss
       <h3>
-        Welcome to our game!! {` `}
+        Welcome to our game, {` `}
         {location.state.username} !!
       </h3>
       <Game ready={status} />
       <h2>
-        name connected{" "}
+        Players connected{" "}
         {nameFromServer && nameFromServer.map((user) => user.name + " + ")}
-        name from server length {nameFromServer.length}
+        <div>number of players in the lobby {nameFromServer.length}</div>
       </h2>
     </div>
   );

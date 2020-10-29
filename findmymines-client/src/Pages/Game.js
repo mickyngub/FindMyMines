@@ -1,44 +1,23 @@
 import React, { useEffect, useState } from "react";
-import Grids from "../Components/Grids";
 
 import Grid from "@material-ui/core/Grid";
 
 import "./Game.css";
 
 const Game = ({ ready }) => {
-  let arrayAnother = [];
-  let arrayNum = [];
+  let arrayBombValue = [];
   const [arrayRandom, setArrayRandom] = useState([]);
   const generateBomb = () => {
     for (let i = 0; i < 9; i++) {
-      let random = Math.floor(Math.random() * 2);
-      arrayNum.push(random);
+      let bombValue = Math.floor(Math.random() * 2);
+      arrayBombValue.push(bombValue);
     }
-    setArrayRandom(arrayNum);
+    setArrayRandom((prev) => (prev = arrayBombValue));
   };
 
-  const createGrid = () => {
-    return arrayRandom.map((valueArray) => {
-      return createOneGrid(valueArray);
-    });
-  };
-  const createOneGrid = (zeroOrOne) => {
-    console.log(zeroOrOne);
-    if (zeroOrOne == 1) {
-      return arrayAnother.push(
-        <Grid item xs={4} className="bomb">
-          this is a bomb
-        </Grid>
-      );
-    } else {
-      return arrayAnother.push(
-        <Grid item xs={4} className="empty">
-          this not a bomb
-        </Grid>
-      );
-    }
-  };
-
+  useEffect(() => {
+    console.log("this is arrayRabndom", arrayRandom);
+  }, [arrayRandom]);
   return (
     <div className="center">
       <button
@@ -47,10 +26,8 @@ const Game = ({ ready }) => {
       >
         Start Game
       </button>
-      {console.log("this is ready", ready)}
       <br />
       {arrayRandom}
-      {arrayAnother.map((i) => i)}
       <div className="game">
         {arrayRandom.map((i) => {
           if (i === 1) {
