@@ -1,26 +1,14 @@
 import React, { useEffect, useState } from "react";
-import Grids from "../Components/Grids";
 import io from "socket.io-client";
+
+import Game from "./Game";
+import "./GamePage.css";
 
 const socket = io("http://localhost:8000");
 
 const GamePage = ({ location }) => {
   let namesOfConnectedUserFromServer = [];
-  const [value, setValue] = useState("");
-  const [name, setName] = useState("");
   const [nameFromServer, setNameFromServer] = useState([]);
-  let onClickHandler = () => {
-    socket.emit("chat message", "I hope this work");
-  };
-
-  let onSubmitHandler = (event) => {
-    socket.emit("name-event", name);
-    event.preventDefault();
-  };
-
-  let onChangeHandler = (e) => {
-    setName(e.target.value);
-  };
 
   useEffect(() => {
     socket.on("name-of-users-connected", (nameObj) => {
@@ -33,23 +21,18 @@ const GamePage = ({ location }) => {
     }
   }, []);
   return (
-    <div>
+    <div className="center">
       Hey welcome to FindMyMines by Micky-Pinn-Boss
-      <h3>
+      <h3 className="center">
         Welcome to our game!! {` `}
         {location.state.username} !!
       </h3>
-      <Grids />
-      <ul id="messages"></ul>
-      <div onClick={onClickHandler}>Send</div>
-      <div>This is value {value}</div>
-      <form onSubmit={onSubmitHandler}>
-        <input onChange={onChangeHandler} type="text"></input>
-        <button type="submit">Submit</button>
-      </form>
-      <div>
-        name connected{" "}
-        {nameFromServer && nameFromServer.map((user) => user.name + " + ")}
+      <Game />
+      <div className="center">
+        <h2>
+          name connected{" "}
+          {nameFromServer && nameFromServer.map((user) => user.name + " + ")}
+        </h2>
       </div>
     </div>
   );
