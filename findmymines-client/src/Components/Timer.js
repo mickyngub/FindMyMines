@@ -12,17 +12,32 @@ const Timer = ({ gameStart }) => {
   };
   useEffect(() => {
     console.log("useEffect is called");
+    let i = 5;
     if (gameStart) {
       const interval = setInterval(() => {
-        setTimer((current) => current - 1);
+        if (i === 0) {
+          clearInterval(interval);
+          console.log("this still gets called");
+        } else {
+          setTimer((current) => current - 1);
+        }
+        i = i - 1;
       }, 1000);
+
       if (test) {
         clearInterval(interval);
       }
 
-      console.log("this line is called");
       return () => clearInterval(interval);
     }
+    // if (gameStart) {
+    //   let x = 5;
+    //   while (x > 0) {
+    //     await new Promise((resolve) => setTimeout(resolve, 1000));
+    //     setTimer((current) => current - 1);
+    //     x = x - 1;
+    //   }
+    // }
   }, [gameStart, test]);
 
   if (gameStart == true) {
