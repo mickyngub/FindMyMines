@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 
 import Grid from "@material-ui/core/Grid";
 import Timer from "../Components/Timer";
-import CountdownTimer from "react-component-countdown-timer";
 import "./Game.css";
 
 const Game = ({ ready, socket }) => {
@@ -53,9 +52,7 @@ const Game = ({ ready, socket }) => {
           }
         })}
       </div>
-      <CountdownTimer border={true} count={10}>
-        Countdown timer
-      </CountdownTimer>
+
       <Timer gameStart={gameStart} />
     </div>
   );

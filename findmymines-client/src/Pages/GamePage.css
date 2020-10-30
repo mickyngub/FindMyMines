@@ -1,3 +1,11 @@
 .center {
   text-align: center;
 }
+
+.player1 {
+  background-color: burlywood;
+}
+
+.player2 {
+  background-color: chartreuse;
+}
