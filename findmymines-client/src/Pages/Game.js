@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 
 import Grid from "@material-ui/core/Grid";
+import Timer from "../Components/Timer";
 
 import "./Game.css";
 
 const Game = ({ ready, socket }) => {
   let arrayBombValue = [];
   const [arrayRandom, setArrayRandom] = useState([]);
+  const [gameStart, setGameStart] = useState(false);
   const generateBomb = () => {
     for (let i = 0; i < 9; i++) {
       let bombValue = Math.floor(Math.random() * 2);
@@ -14,6 +16,7 @@ const Game = ({ ready, socket }) => {
     }
     setArrayRandom((prev) => (prev = arrayBombValue));
     socket.emit("bombLocation", arrayBombValue);
+    setGameStart((prev) => !prev);
   };
 
   useEffect(() => {
@@ -50,6 +53,7 @@ const Game = ({ ready, socket }) => {
           }
         })}
       </div>
+      <Timer gameStart={gameStart} />
     </div>
   );
 };
