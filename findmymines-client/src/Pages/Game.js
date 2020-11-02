@@ -21,15 +21,17 @@ const Game = ({ ready, socket, nameFromServer }) => {
     socket.emit("gameStart");
   };
 
+  socket.on("gameStartFromServer", () => {
+    setGameStart((prev) => !prev);
+    setPlayer((prev) => !prev);
+  });
+
+  socket.on("bombFromServer", (arrayBombLocation) => {
+    console.log("io.on received bombFromServer", arrayBombLocation);
+    setArrayRandom((prev) => (prev = arrayBombLocation));
+  });
+
   useEffect(() => {
-    socket.on("bombFromServer", (arrayBombLocation) => {
-      console.log("io.on received bombFromServer", arrayBombLocation);
-      setArrayRandom((prev) => (prev = arrayBombLocation));
-    });
-    socket.on("gameStartFromServer", () => {
-      setGameStart((prev) => !prev);
-      setPlayer((prev) => !prev);
-    });
     console.log("this is arrayRandom", arrayRandom);
   }, [arrayRandom, nameFromServer]);
 
