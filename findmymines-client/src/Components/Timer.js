@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const Timer = ({ gameStart }) => {
+const Timer = ({ gameStart, socket }) => {
   const [timer, setTimer] = useState(10);
   const [test, setTest] = useState(false);
   //   const [timesup, setTimesup] = useState(false);
@@ -18,6 +18,7 @@ const Timer = ({ gameStart }) => {
         if (i === 0) {
           clearInterval(interval);
           console.log("this still gets called");
+          socket.emit("timerZero");
         } else {
           setTimer((current) => current - 1);
         }

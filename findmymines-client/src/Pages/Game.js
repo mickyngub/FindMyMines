@@ -26,6 +26,9 @@ const Game = ({ ready, socket, nameFromServer }) => {
     setPlayer((prev) => !prev);
   });
 
+  socket.on("timerZeroFromServer", () => {
+    setPlayer((prev) => !prev);
+  });
   socket.on("bombFromServer", (arrayBombLocation) => {
     console.log("io.on received bombFromServer", arrayBombLocation);
     setArrayRandom((prev) => (prev = arrayBombLocation));
@@ -64,7 +67,7 @@ const Game = ({ ready, socket, nameFromServer }) => {
           }
         })}
       </div>
-      <Timer gameStart={gameStart} />
+      <Timer gameStart={gameStart} socket={socket} />
       <div>
         {console.log("this name from server", nameFromServer)}
         {nameFromServer[1] && player === false

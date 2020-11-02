@@ -29,6 +29,9 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("gameStartFromServer");
   });
 
+  socket.on("timerZero", () => {
+    socket.emit("timerZeroFromServer");
+  });
   socket.on("disconnect", () => {
     console.log("what is this", socket.id);
     console.log("a user disconnect");
