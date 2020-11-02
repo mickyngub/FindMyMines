@@ -25,6 +25,10 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("bombFromServer", bombLocation);
   });
 
+  socket.on("gameStart", () => {
+    socket.broadcast.emit("gameStartFromServer");
+  });
+
   socket.on("disconnect", () => {
     console.log("what is this", socket.id);
     console.log("a user disconnect");

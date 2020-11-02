@@ -10,7 +10,6 @@ const GamePage = ({ location }) => {
   // let namesOfConnectedUserFromServer = [];
   const [status, setStatus] = useState(false);
   const [nameFromServer, setNameFromServer] = useState([]);
-  const [player, setPlayer] = useState(false);
 
   useEffect(() => {
     socket.on("name-of-users-connected", (nameObj) => {
@@ -30,26 +29,14 @@ const GamePage = ({ location }) => {
     }
   }, []);
   return (
-    <div className={`center ${player == false ? "player1" : "player2"}`}>
+    <div className={`center`}>
       Hey welcome to FindMyMines by Micky-Pinn-Boss
       <h3>
         Welcome to our game, {` `}
-        {location.state.username} !!
+        {location.state.username} !! With the id {location.state.id}
       </h3>
-      <Game ready={status} socket={socket} />
-      <h2>
-        Players connected{" "}
-        {nameFromServer && nameFromServer.map((user) => user.name + " + ")}
-        <div>number of players in the lobby {nameFromServer.length}</div>
-      </h2>
-      <div>{player === false ? "Player1's turn" : "Player2's turn"}</div>
-      <button
-        onClick={() => {
-          setPlayer((prev) => !prev);
-        }}
-      >
-        Switch Player
-      </button>
+      <Game ready={status} socket={socket} nameFromServer={nameFromServer} />
+      <h2>Players connected </h2>
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 const Timer = ({ gameStart }) => {
-  const [timer, setTimer] = useState(5);
+  const [timer, setTimer] = useState(10);
   const [test, setTest] = useState(false);
   //   const [timesup, setTimesup] = useState(false);
   //   if (timer === 0) {
@@ -12,7 +12,7 @@ const Timer = ({ gameStart }) => {
   };
   useEffect(() => {
     console.log("useEffect is called");
-    let i = 5;
+    let i = 10;
     if (gameStart) {
       const interval = setInterval(() => {
         if (i === 0) {

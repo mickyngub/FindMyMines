@@ -4,10 +4,12 @@ import Grid from "@material-ui/core/Grid";
 import Timer from "../Components/Timer";
 import "./Game.css";
 
-const Game = ({ ready, socket }) => {
+const Game = ({ ready, socket, nameFromServer }) => {
   let arrayBombValue = [];
   const [arrayRandom, setArrayRandom] = useState([]);
   const [gameStart, setGameStart] = useState(false);
+  const [player, setPlayer] = useState(false);
+
   const generateBomb = () => {
     for (let i = 0; i < 9; i++) {
       let bombValue = Math.floor(Math.random() * 2);
@@ -16,6 +18,7 @@ const Game = ({ ready, socket }) => {
     setArrayRandom((prev) => (prev = arrayBombValue));
     socket.emit("bombLocation", arrayBombValue);
     setGameStart((prev) => !prev);
+    socket.emit("gameStart");
   };
 
   useEffect(() => {
@@ -23,12 +26,18 @@ const Game = ({ ready, socket }) => {
       console.log("io.on received bombFromServer", arrayBombLocation);
       setArrayRandom((prev) => (prev = arrayBombLocation));
     });
-    console.log("this is arrayRabndom", arrayRandom);
-  }, [arrayRandom]);
+    socket.on("gameStartFromServer", () => {
+      setGameStart((prev) => !prev);
+    });
+    console.log("this is arrayRandom", arrayRandom);
+  }, [arrayRandom, nameFromServer]);
+
   return (
-    <div className="center">
+    <div className={`center ${player ? "is-playing" : "not-playing"}`}>
       <button
-        className={`start-button${ready ? "-yes" : "-no"}`}
+        className={`start-button${ready ? "-yes" : "-no"} ${
+          gameStart ? "start-no" : ""
+        } `}
         onClick={generateBomb}
       >
         Start Game
@@ -54,6 +63,23 @@ const Game = ({ ready, socket }) => {
       </div>
 
       <Timer gameStart={gameStart} />
+      <div>
+        {console.log("this name from server", nameFromServer)}
+        {nameFromServer[1] && player === false
+          ? nameFromServer[1].name + "'s turn"
+          : ""}
+        {nameFromServer[0] && player === true
+          ? nameFromServer[0].name + "'s turn"
+          : ""}
+      </div>
+      <button
+        onClick={() => {
+          setPlayer((prev) => !prev);
+        }}
+      >
+        Switch Player
+      </button>
+      {nameFromServer && nameFromServer.map((user) => " + " + user.name)}
     </div>
   );
 };

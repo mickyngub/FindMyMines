@@ -28,6 +28,17 @@
   grid-template-columns: auto auto auto;
   grid-template-rows: auto auto auto;
   gap: 2vw 2vh;
+}
 
-  /* align-items: baseline; */
+.start-no {
+  display: none;
+}
+/* align-items: baseline; */
+
+.is-playing {
+  background-color: chartreuse;
+}
+
+.not-playing {
+  background-color: cornflowerblue;
 }
