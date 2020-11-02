@@ -28,6 +28,7 @@ const Game = ({ ready, socket, nameFromServer }) => {
     });
     socket.on("gameStartFromServer", () => {
       setGameStart((prev) => !prev);
+      setPlayer((prev) => !prev);
     });
     console.log("this is arrayRandom", arrayRandom);
   }, [arrayRandom, nameFromServer]);
@@ -61,7 +62,6 @@ const Game = ({ ready, socket, nameFromServer }) => {
           }
         })}
       </div>
-
       <Timer gameStart={gameStart} />
       <div>
         {console.log("this name from server", nameFromServer)}
@@ -79,7 +79,9 @@ const Game = ({ ready, socket, nameFromServer }) => {
       >
         Switch Player
       </button>
-      {nameFromServer && nameFromServer.map((user) => " + " + user.name)}
+      {nameFromServer && nameFromServer.map((user) => " " + user.name)} is in
+      the lobby
+      {console.log('THIS IS PLAYER"s VLUAE', player)}
     </div>
   );
 };

@@ -36,9 +36,9 @@
 /* align-items: baseline; */
 
 .is-playing {
-  background-color: chartreuse;
+  background-color: rgb(110, 248, 110);
 }
 
 .not-playing {
-  background-color: cornflowerblue;
+  background-color: gray;
 }
