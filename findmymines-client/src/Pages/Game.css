@@ -42,3 +42,12 @@
 .not-playing {
   background-color: gray;
 }
+
+.can-click {
+  background-color: indigo;
+}
+
+.cannot-click {
+  background-color: khaki;
+  pointer-events: none;
+}

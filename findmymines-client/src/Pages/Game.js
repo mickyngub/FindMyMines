@@ -9,7 +9,7 @@ const Game = ({ ready, socket, nameFromServer }) => {
   const [arrayRandom, setArrayRandom] = useState([]);
   const [gameStart, setGameStart] = useState(false);
   const [player, setPlayer] = useState(false);
-
+  const [clientTimer, setClientTimer] = useState(0);
   const generateBomb = () => {
     for (let i = 0; i < 9; i++) {
       let bombValue = Math.floor(Math.random() * 2);
@@ -24,7 +24,8 @@ const Game = ({ ready, socket, nameFromServer }) => {
   useEffect(() => {
     console.log("this is arrayRandom", arrayRandom);
     socket.on("timerFromServer", (timer) => {
-      console.log("this is timer in client", timer);
+      setClientTimer(timer);
+      // console.log("this is timer in client", timer);
       if (timer == 10) {
         console.log("setPlayer");
         setPlayer((prev) => !prev);
@@ -58,13 +59,21 @@ const Game = ({ ready, socket, nameFromServer }) => {
         {arrayRandom.map((i) => {
           if (i === 1) {
             return (
-              <Grid item className="bomb">
+              <Grid
+                item
+                onClick={() => console.log("This is a bomb!!")}
+                className={`${player ? "can-click" : "cannot-click"}`}
+              >
                 <h3>Bomb!</h3>
               </Grid>
             );
           } else {
             return (
-              <Grid item className="empty">
+              <Grid
+                item
+                onClick={() => console.log("Not a bomb!!")}
+                className={`${player ? "can-click" : "cannot-click"}`}
+              >
                 <h3>not a bomb!</h3>
               </Grid>
             );
@@ -90,6 +99,7 @@ const Game = ({ ready, socket, nameFromServer }) => {
       </button>
       {nameFromServer && nameFromServer.map((user) => " " + user.name)} is in
       the lobby
+      <h3>This is Client Timer {clientTimer}</h3>
     </div>
   );
 };
