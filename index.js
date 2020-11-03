@@ -25,14 +25,32 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("bombFromServer", bombLocation);
   });
 
-  socket.on("gameStart", () => {
+  socket.on("gameStart", (msg) => {
+    if (msg == "stopTimer") {
+      clearInterval(interval);
+    }
     socket.broadcast.emit("gameStartFromServer");
+    let timer = 9;
+    const interval = setInterval(() => {
+      if (timer == -1) {
+        timer = 10;
+      }
+
+      io.emit("timerFromServer", timer);
+      console.log("emit timer zero from server every second");
+
+      console.log("this is timer value in server", timer);
+      timer = timer - 1;
+    }, 1000);
+
+    return () => clearInterval(interval);
   });
 
-  socket.on("timerZero", () => {
-    socket.emit("timerZeroFromServer");
-  });
+  // socket.on("timerZero", () => {
+  //   socket.emit("timerZeroFromServer");
+  // });
   socket.on("disconnect", () => {
+    socket.emit("gameStart", "stopTimer");
     console.log("what is this", socket.id);
     console.log("a user disconnect");
     userConnectedArray = userConnectedArray.filter((obj) => {

@@ -17,26 +17,30 @@ const Game = ({ ready, socket, nameFromServer }) => {
     }
     setArrayRandom((prev) => (prev = arrayBombValue));
     socket.emit("bombLocation", arrayBombValue);
-    setGameStart((prev) => !prev);
+    setGameStart(true);
     socket.emit("gameStart");
   };
 
-  socket.on("gameStartFromServer", () => {
-    setGameStart((prev) => !prev);
-    setPlayer((prev) => !prev);
-  });
-
-  socket.on("timerZeroFromServer", () => {
-    setPlayer((prev) => !prev);
-  });
-  socket.on("bombFromServer", (arrayBombLocation) => {
-    console.log("io.on received bombFromServer", arrayBombLocation);
-    setArrayRandom((prev) => (prev = arrayBombLocation));
-  });
-
   useEffect(() => {
     console.log("this is arrayRandom", arrayRandom);
-  }, [arrayRandom, nameFromServer]);
+    socket.on("timerFromServer", (timer) => {
+      console.log("this is timer in client", timer);
+      if (timer == 10) {
+        console.log("setPlayer");
+        setPlayer((prev) => !prev);
+      }
+      // setPlayer((prev) => !prev);
+    });
+    socket.on("gameStartFromServer", () => {
+      setGameStart(true);
+      setPlayer((prev) => !prev);
+    });
+
+    socket.on("bombFromServer", (arrayBombLocation) => {
+      console.log("io.on received bombFromServer", arrayBombLocation);
+      setArrayRandom((prev) => (prev = arrayBombLocation));
+    });
+  }, []);
 
   return (
     <div className={`center ${player ? "is-playing" : "not-playing"}`}>
@@ -67,9 +71,9 @@ const Game = ({ ready, socket, nameFromServer }) => {
           }
         })}
       </div>
-      <Timer gameStart={gameStart} socket={socket} />
+      {/* <Timer gameStart={gameStart} socket={socket} /> */}
       <div>
-        {console.log("this name from server", nameFromServer)}
+        {console.log("rerender inside div")}
         {nameFromServer[1] && player === false
           ? nameFromServer[1].name + "'s turn"
           : ""}
@@ -86,7 +90,6 @@ const Game = ({ ready, socket, nameFromServer }) => {
       </button>
       {nameFromServer && nameFromServer.map((user) => " " + user.name)} is in
       the lobby
-      {console.log('THIS IS PLAYER"s VLUAE', player)}
     </div>
   );
 };
