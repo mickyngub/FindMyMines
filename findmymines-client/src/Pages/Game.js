@@ -12,13 +12,37 @@ const Game = ({ ready, socket, nameFromServer }) => {
   const [clientTimer, setClientTimer] = useState(0);
   const generateBomb = () => {
     for (let i = 0; i < 36; i++) {
-      let bombValue = Math.floor(Math.random() * 2);
-      arrayBombValue.push(bombValue);
+      // let bombValue = Math.floor(Math.random() * 2);
+      if (i < 11) {
+        arrayBombValue.push(1);
+      } else {
+        arrayBombValue.push(0);
+      }
+      // arrayBombValue.push(bombValue);
     }
+    arrayBombValue = shuffleBomb(arrayBombValue);
     setArrayRandom((prev) => (prev = arrayBombValue));
     socket.emit("bombLocation", arrayBombValue);
     setGameStart(true);
     socket.emit("gameStart");
+  };
+  const shuffleBomb = (arrayBomb) => {
+    let ctr = arrayBomb.length;
+    let temp;
+    let index;
+
+    // While there are elements in the array
+    while (ctr > 0) {
+      // Pick a random index
+      index = Math.floor(Math.random() * ctr);
+      // Decrease ctr by 1
+      ctr--;
+      // And swap the last element with it
+      temp = arrayBomb[ctr];
+      arrayBomb[ctr] = arrayBomb[index];
+      arrayBomb[index] = temp;
+    }
+    return arrayBomb;
   };
 
   useEffect(() => {
