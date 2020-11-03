@@ -12,13 +12,18 @@ const Timer = ({ gameStart, socket }) => {
   };
   useEffect(() => {
     console.log("useEffect is called");
-    let i = 10;
+    let i = 9999;
     if (gameStart) {
       const interval = setInterval(() => {
-        if (i === 0) {
-          clearInterval(interval);
-          console.log("this still gets called");
+        if (i % 10 === 0) {
+          // setTimer((current) => {
+          //   current = 5;
+          // });
           socket.emit("timerZero");
+
+          setTimer(10);
+          // i = 5;
+          console.log("this still gets called");
         } else {
           setTimer((current) => current - 1);
         }
