@@ -11,7 +11,7 @@ const Game = ({ ready, socket, nameFromServer }) => {
   const [player, setPlayer] = useState(false);
   const [clientTimer, setClientTimer] = useState(0);
   const generateBomb = () => {
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; i < 36; i++) {
       let bombValue = Math.floor(Math.random() * 2);
       arrayBombValue.push(bombValue);
     }
@@ -56,29 +56,33 @@ const Game = ({ ready, socket, nameFromServer }) => {
       <br />
       {arrayRandom}
       <div className="game">
-        {arrayRandom.map((i) => {
-          if (i === 1) {
-            return (
-              <Grid
-                item
-                onClick={() => console.log("This is a bomb!!")}
-                className={`${player ? "can-click" : "cannot-click"}`}
-              >
-                <h3>Bomb!</h3>
-              </Grid>
-            );
-          } else {
-            return (
-              <Grid
-                item
-                onClick={() => console.log("Not a bomb!!")}
-                className={`${player ? "can-click" : "cannot-click"}`}
-              >
-                <h3>not a bomb!</h3>
-              </Grid>
-            );
-          }
-        })}
+        <Grid container spacing={0} className="grid-container">
+          {arrayRandom.map((i) => {
+            if (i === 1) {
+              return (
+                <Grid
+                  item
+                  xs={2}
+                  onClick={() => console.log("This is a bomb!!")}
+                  className={`${player ? "can-click" : "cannot-click"}`}
+                >
+                  <h3>Bomb!</h3>
+                </Grid>
+              );
+            } else {
+              return (
+                <Grid
+                  item
+                  xs={2}
+                  onClick={() => console.log("Not a bomb!!")}
+                  className={`${player ? "can-click" : "cannot-click"}`}
+                >
+                  <h3>not a bomb!</h3>
+                </Grid>
+              );
+            }
+          })}
+        </Grid>
       </div>
       {/* <Timer gameStart={gameStart} socket={socket} /> */}
       <div>
