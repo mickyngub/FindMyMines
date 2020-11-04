@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 
 import Grid from "@material-ui/core/Grid";
-import Timer from "../Components/Timer";
 import "./Game.css";
+import bombPic from "../Pics/bombPic.png";
+import notBombPic from "../Pics/notBombPic.jpg";
 
 const Game = ({ ready, socket, nameFromServer }) => {
   let arrayBombValue = [];
@@ -138,7 +139,7 @@ const Game = ({ ready, socket, nameFromServer }) => {
                   xs={2}
                   className={`${player ? "can-click" : "cannot-click"}`}
                 >
-                  <h3>not a bomb and clicked!</h3>
+                  <img className="pic" src={notBombPic}></img>
                 </Grid>
               );
             } else {
@@ -148,7 +149,7 @@ const Game = ({ ready, socket, nameFromServer }) => {
                   xs={2}
                   className={`${player ? "can-click" : "cannot-click"}`}
                 >
-                  <h3>bomb and clicked!</h3>
+                  <img className="pic" src={bombPic}></img>
                 </Grid>
               );
             }

@@ -4,7 +4,7 @@ import io from "socket.io-client";
 import Game from "./Game";
 import "./GamePage.css";
 
-const socket = io("http://localhost:8000");
+const socket = io("http://192.168.68.105:8000");
 
 const GamePage = ({ location }) => {
   // let namesOfConnectedUserFromServer = [];
