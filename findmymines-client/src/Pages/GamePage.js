@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
+import Typography from "@material-ui/core/Typography";
 
 import Game from "./Game";
 import "./GamePage.css";
 
-const socket = io("http://192.168.68.105:8000");
+const socket = io("http://localhost:8000");
 
 const GamePage = ({ location }) => {
   // let namesOfConnectedUserFromServer = [];
@@ -33,10 +34,12 @@ const GamePage = ({ location }) => {
       Hey welcome to FindMyMines by Micky-Pinn-Boss
       <h3>
         Welcome to our game, {` `}
-        {location.state.username} !! With the id {location.state.id}
+        <Typography variant="h1" gutterBottom>
+          {location.state.username}
+        </Typography>{" "}
+        {/* !! With the id {location.state.id} */}
       </h3>
       <Game ready={status} socket={socket} nameFromServer={nameFromServer} />
-      <h2>Players connected </h2>
     </div>
   );
 };

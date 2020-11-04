@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Typography from "@material-ui/core/Typography";
 
 import Grid from "@material-ui/core/Grid";
 import "./Game.css";
@@ -54,6 +55,7 @@ const Game = ({ ready, socket, nameFromServer }) => {
     console.log("value before not bomb", arrayRandom);
     arrayRandom[index] = 2;
     console.log("value after not bomb", arrayRandom);
+    setArrayRandom(arrayRandom);
 
     socket.emit("bombLocation", arrayRandom);
   };
@@ -62,6 +64,7 @@ const Game = ({ ready, socket, nameFromServer }) => {
 
     arrayRandom[index] = 3;
     console.log("value after bomb", arrayRandom);
+    setArrayRandom(arrayRandom);
 
     socket.emit("bombLocation", arrayRandom);
   };
@@ -89,94 +92,115 @@ const Game = ({ ready, socket, nameFromServer }) => {
   }, []);
 
   return (
-    <div className={`center ${player ? "is-playing" : "not-playing"}`}>
-      <button
-        className={`start-button${ready ? "-yes" : "-no"} ${
-          gameStart ? "start-no" : ""
-        } `}
-        onClick={generateBomb}
-      >
-        Start Game
-      </button>
-      <br />
-      {arrayRandom}
-      {console.log("this is arrayRandom", arrayRandom)}
-      <div className="game">
-        <Grid container spacing={0} className="grid-container">
-          {arrayRandom.map((value, index) => {
-            if (value === 1) {
-              return (
-                <Grid
-                  item
-                  xs={2}
-                  onClick={() => {
-                    bombIsClicked(index, arrayRandom);
-                    console.log("bomb is clicked", index);
-                  }}
-                  className={`${player ? "can-click" : "cannot-click"}`}
-                >
-                  <h3>Bomb!</h3>
-                </Grid>
-              );
-            } else if (value === 0) {
-              return (
-                <Grid
-                  item
-                  xs={2}
-                  onClick={() => {
-                    notBombIsClicked(index, arrayRandom);
-                    console.log("NOT bomb is clicked", index);
-                  }}
-                  className={`${player ? "can-click" : "cannot-click"}`}
-                >
-                  <h3>not a bomb!</h3>
-                </Grid>
-              );
-            } else if (value === 2) {
-              return (
-                <Grid
-                  item
-                  xs={2}
-                  className={`${player ? "can-click" : "cannot-click"}`}
-                >
-                  <img className="pic" src={notBombPic}></img>
-                </Grid>
-              );
-            } else {
-              return (
-                <Grid
-                  item
-                  xs={2}
-                  className={`${player ? "can-click" : "cannot-click"}`}
-                >
-                  <img className="pic" src={bombPic}></img>
-                </Grid>
-              );
-            }
-          })}
-        </Grid>
+    <>
+      <div className={`center ${player ? "is-playing" : "not-playing"}`}>
+        <button
+          className={`start-button${ready ? "-yes" : "-no"} ${
+            gameStart ? "start-no" : ""
+          } `}
+          onClick={generateBomb}
+        >
+          Start Game
+        </button>
+        <br />
+        {arrayRandom}
+        {console.log("this is arrayRandom", arrayRandom)}
+        <div className="game">
+          <Grid container spacing={0} className="grid-container">
+            {arrayRandom.map((value, index) => {
+              if (value === 1) {
+                return (
+                  <Grid
+                    item
+                    xs={2}
+                    onClick={() => {
+                      bombIsClicked(index, arrayRandom);
+                      console.log("bomb is clicked", index);
+                    }}
+                    className={`${player ? "can-click" : "cannot-click"}`}
+                  >
+                    <h3>Bomb!</h3>
+                  </Grid>
+                );
+              } else if (value === 0) {
+                return (
+                  <Grid
+                    item
+                    xs={2}
+                    onClick={() => {
+                      notBombIsClicked(index, arrayRandom);
+                      console.log("NOT bomb is clicked", index);
+                    }}
+                    className={`${player ? "can-click" : "cannot-click"}`}
+                  >
+                    <h3>not a bomb!</h3>
+                  </Grid>
+                );
+              } else if (value === 2) {
+                return (
+                  <Grid
+                    item
+                    xs={2}
+                    className={`${player ? "can-click" : "cannot-click"}`}
+                  >
+                    <img className="pic" src={notBombPic}></img>
+                  </Grid>
+                );
+              } else {
+                return (
+                  <Grid
+                    item
+                    xs={2}
+                    className={`${player ? "can-click" : "cannot-click"}`}
+                  >
+                    <img className="pic" src={bombPic}></img>
+                  </Grid>
+                );
+              }
+            })}
+          </Grid>
+        </div>
+        {/* <Timer gameStart={gameStart} socket={socket} /> */}
       </div>
-      {/* <Timer gameStart={gameStart} socket={socket} /> */}
       <div>
-        {console.log("rerender inside div")}
-        {nameFromServer[1] && player === false
-          ? nameFromServer[1].name + "'s turn"
-          : ""}
-        {nameFromServer[0] && player === true
-          ? nameFromServer[0].name + "'s turn"
-          : ""}
-      </div>
-      <button
+        {gameStart ? (
+          <Typography variant="h4">
+            {nameFromServer[1] && player === false
+              ? nameFromServer[1].name + "'s turn"
+              : ""}
+            {nameFromServer[0] && player === true
+              ? nameFromServer[0].name + "'s turn"
+              : ""}
+          </Typography>
+        ) : (
+          ""
+        )}
+
+        {/* <button
         onClick={() => {
           setPlayer((prev) => !prev);
         }}
       >
         Switch Player
-      </button>
-      {nameFromServer && nameFromServer.map((user) => " " + user.name)} is in
-      the lobby
-      <h3>This is Client Timer {clientTimer}</h3>
-    </div>
+      </button> */}
+
+        <Typography variant="h3">
+          Players in lobby :
+          {nameFromServer &&
+            nameFromServer.map((user, index) => {
+              if (index === 1) {
+                return " , " + user.name;
+              } else {
+                return " " + user.name;
+              }
+            })}{" "}
+        </Typography>
+        <Typography variant="h3">
+          {nameFromServer && nameFromServer.length} people are in this lobby
+        </Typography>
+        <h3>This is Client Timer {clientTimer}</h3>
+      </div>
+    </>
   );
 };
 
