@@ -45,6 +45,26 @@ const Game = ({ ready, socket, nameFromServer }) => {
     return arrayBomb;
   };
 
+  // 0 is not bomb
+  // 1 is bomb
+  // 2 is not bomb and clicked
+  // 3 is bomb and clicked
+  const notBombIsClicked = (index, arrayRandom) => {
+    console.log("value before not bomb", arrayRandom);
+    arrayRandom[index] = 2;
+    console.log("value after not bomb", arrayRandom);
+
+    socket.emit("bombLocation", arrayRandom);
+  };
+  const bombIsClicked = (index, arrayRandom) => {
+    console.log("value before bomb", arrayRandom);
+
+    arrayRandom[index] = 3;
+    console.log("value after bomb", arrayRandom);
+
+    socket.emit("bombLocation", arrayRandom);
+  };
+
   useEffect(() => {
     console.log("this is arrayRandom", arrayRandom);
     socket.on("timerFromServer", (timer) => {
@@ -63,7 +83,7 @@ const Game = ({ ready, socket, nameFromServer }) => {
 
     socket.on("bombFromServer", (arrayBombLocation) => {
       console.log("io.on received bombFromServer", arrayBombLocation);
-      setArrayRandom((prev) => (prev = arrayBombLocation));
+      setArrayRandom(arrayBombLocation);
     });
   }, []);
 
@@ -79,18 +99,46 @@ const Game = ({ ready, socket, nameFromServer }) => {
       </button>
       <br />
       {arrayRandom}
+      {console.log("this is arrayRandom", arrayRandom)}
       <div className="game">
         <Grid container spacing={0} className="grid-container">
-          {arrayRandom.map((i) => {
-            if (i === 1) {
+          {arrayRandom.map((value, index) => {
+            if (value === 1) {
               return (
                 <Grid
                   item
                   xs={2}
-                  onClick={() => console.log("This is a bomb!!")}
+                  onClick={() => {
+                    bombIsClicked(index, arrayRandom);
+                    console.log("bomb is clicked", index);
+                  }}
                   className={`${player ? "can-click" : "cannot-click"}`}
                 >
                   <h3>Bomb!</h3>
+                </Grid>
+              );
+            } else if (value === 0) {
+              return (
+                <Grid
+                  item
+                  xs={2}
+                  onClick={() => {
+                    notBombIsClicked(index, arrayRandom);
+                    console.log("NOT bomb is clicked", index);
+                  }}
+                  className={`${player ? "can-click" : "cannot-click"}`}
+                >
+                  <h3>not a bomb!</h3>
+                </Grid>
+              );
+            } else if (value === 2) {
+              return (
+                <Grid
+                  item
+                  xs={2}
+                  className={`${player ? "can-click" : "cannot-click"}`}
+                >
+                  <h3>not a bomb and clicked!</h3>
                 </Grid>
               );
             } else {
@@ -98,10 +146,9 @@ const Game = ({ ready, socket, nameFromServer }) => {
                 <Grid
                   item
                   xs={2}
-                  onClick={() => console.log("Not a bomb!!")}
                   className={`${player ? "can-click" : "cannot-click"}`}
                 >
-                  <h3>not a bomb!</h3>
+                  <h3>bomb and clicked!</h3>
                 </Grid>
               );
             }
