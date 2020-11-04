@@ -45,13 +45,13 @@
 
 .can-click {
   border: 10px solid white;
-  background-color: rgb(164, 102, 209);
+  /* background-color: rgb(164, 102, 209); */
 }
 
 .cannot-click {
   border: 10px solid white;
 
-  background-color: khaki;
+  /* background-color: khaki; */
   pointer-events: none;
 }
 

@@ -45,6 +45,9 @@ io.on("connection", (socket) => {
 
     return () => clearInterval(interval);
   });
+  socket.on("gameEnd", () => {
+    io.emit("gameEndFromServer");
+  });
   // socket.on("bombIsClicked", (index) => {});
 
   // socket.on("timerZero", () => {

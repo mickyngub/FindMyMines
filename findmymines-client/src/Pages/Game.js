@@ -88,7 +88,10 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
     socket.emit("bombLocation", arrayRandom);
     setYourScore((prev) => prev + 1);
     socket.emit("plusScore");
-    setIsClicked(true);
+    if (arrayRandom.indexOf(1) === -1) {
+      socket.emit("gameEnd");
+    }
+    // setIsClicked(true);
   };
 
   useEffect(() => {
@@ -110,6 +113,10 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
       } else {
         setPlayer(true);
       }
+    });
+
+    socket.on("gameEndFromServer", () => {
+      setArrayRandom([]);
     });
 
     socket.on("bombFromServer", (arrayBombLocation) => {
@@ -154,6 +161,7 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
                     }`}
                   >
                     <h3>Bomb!</h3>
+                    {/* <h2>Click me!</h2> */}
                   </Grid>
                 );
               } else if (value === 0) {
@@ -169,7 +177,8 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
                       player && !isClicked ? "can-click" : "cannot-click"
                     }`}
                   >
-                    <h3>not a bomb!</h3>
+                    {/* <h3>not a bomb!</h3> */}
+                    <h2>Click me!</h2>
                   </Grid>
                 );
               } else if (value === 2) {
@@ -182,7 +191,7 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
                     <img className="pic" src={notBombPic}></img>
                   </Grid>
                 );
-              } else {
+              } else if (value === 3) {
                 return (
                   <Grid
                     item
@@ -192,6 +201,8 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
                     <img className="pic" src={bombPic}></img>
                   </Grid>
                 );
+              } else {
+                return;
               }
             })}
           </Grid>
