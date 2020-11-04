@@ -26,7 +26,14 @@ const Game = ({ ready, socket, nameFromServer }) => {
     setArrayRandom((prev) => (prev = arrayBombValue));
     socket.emit("bombLocation", arrayBombValue);
     setGameStart(true);
-    socket.emit("gameStart");
+    let randomPlayerValue = Math.random();
+    console.log("this is random value", randomPlayerValue);
+    socket.emit("gameStart", randomPlayerValue);
+    if (randomPlayerValue >= 0.5) {
+      setPlayer(true);
+    } else {
+      setPlayer(false);
+    }
   };
   const shuffleBomb = (arrayBomb) => {
     let ctr = arrayBomb.length;
@@ -80,9 +87,13 @@ const Game = ({ ready, socket, nameFromServer }) => {
       }
       // setPlayer((prev) => !prev);
     });
-    socket.on("gameStartFromServer", () => {
+    socket.on("gameStartFromServer", (randomPlayerValue) => {
       setGameStart(true);
-      setPlayer((prev) => !prev);
+      if (randomPlayerValue >= 0.5) {
+        setPlayer(false);
+      } else {
+        setPlayer(true);
+      }
     });
 
     socket.on("bombFromServer", (arrayBombLocation) => {

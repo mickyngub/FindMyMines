@@ -25,11 +25,8 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("bombFromServer", bombLocation);
   });
 
-  socket.on("gameStart", (msg) => {
-    if (msg == "stopTimer") {
-      clearInterval(interval);
-    }
-    socket.broadcast.emit("gameStartFromServer");
+  socket.on("gameStart", (randomPlayerValue) => {
+    socket.broadcast.emit("gameStartFromServer", randomPlayerValue);
     let timer = 9;
     const interval = setInterval(() => {
       if (timer == -1) {
