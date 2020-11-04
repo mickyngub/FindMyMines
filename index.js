@@ -25,6 +25,9 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("bombFromServer", bombLocation);
   });
 
+  socket.on("plusScore", () => {
+    socket.broadcast.emit("plusScoreFromServer");
+  });
   socket.on("gameStart", (randomPlayerValue) => {
     socket.broadcast.emit("gameStartFromServer", randomPlayerValue);
     let timer = 9;

@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from "react";
 import Typography from "@material-ui/core/Typography";
-
 import Grid from "@material-ui/core/Grid";
+
+import Scoreboard from "../Components/Scoreboard";
+
 import "./Game.css";
 import bombPic from "../Pics/bombPic.png";
 import notBombPic from "../Pics/notBombPic.jpg";
 
-const Game = ({ ready, socket, nameFromServer }) => {
+const Game = ({ ready, socket, nameFromServer, playerName }) => {
   let arrayBombValue = [];
+  let opponentName = "";
   const [arrayRandom, setArrayRandom] = useState([]);
   const [gameStart, setGameStart] = useState(false);
   const [player, setPlayer] = useState(false);
-  const [clientTimer, setClientTimer] = useState(0);
+  const [yourScore, setYourScore] = useState(0);
+  const [opponentScore, setOpponentScore] = useState(0);
+  const [clientTimer, setClientTimer] = useState(10);
   const generateBomb = () => {
     for (let i = 0; i < 36; i++) {
       // let bombValue = Math.floor(Math.random() * 2);
@@ -53,7 +58,13 @@ const Game = ({ ready, socket, nameFromServer }) => {
     }
     return arrayBomb;
   };
-
+  if (nameFromServer[1]) {
+    if (nameFromServer[1].name === playerName) {
+      opponentName = nameFromServer[0].name;
+    } else {
+      opponentName = nameFromServer[1].name;
+    }
+  }
   // 0 is not bomb
   // 1 is bomb
   // 2 is not bomb and clicked
@@ -72,8 +83,9 @@ const Game = ({ ready, socket, nameFromServer }) => {
     arrayRandom[index] = 3;
     console.log("value after bomb", arrayRandom);
     setArrayRandom(arrayRandom);
-
     socket.emit("bombLocation", arrayRandom);
+    setYourScore((prev) => prev + 1);
+    socket.emit("plusScore");
   };
 
   useEffect(() => {
@@ -100,10 +112,15 @@ const Game = ({ ready, socket, nameFromServer }) => {
       console.log("io.on received bombFromServer", arrayBombLocation);
       setArrayRandom(arrayBombLocation);
     });
+
+    socket.on("plusScoreFromServer", () => {
+      setOpponentScore((prev) => prev + 1);
+    });
   }, []);
 
   return (
     <>
+      <Scoreboard nameFromServer={nameFromServer} />
       <div className={`center ${player ? "is-playing" : "not-playing"}`}>
         <button
           className={`start-button${ready ? "-yes" : "-no"} ${
@@ -174,7 +191,7 @@ const Game = ({ ready, socket, nameFromServer }) => {
         {/* <Timer gameStart={gameStart} socket={socket} /> */}
       </div>
       <div>
-        {gameStart ? (
+        {/* {gameStart ? (
           <Typography variant="h4">
             {nameFromServer[1] && player === false
               ? nameFromServer[1].name + "'s turn"
@@ -185,8 +202,14 @@ const Game = ({ ready, socket, nameFromServer }) => {
           </Typography>
         ) : (
           ""
+        )} */}
+        {gameStart ? (
+          <Typography variant="h4">
+            {player ? "Your turn" : "Opponent's turn"}
+          </Typography>
+        ) : (
+          ""
         )}
-
         {/* <button
         onClick={() => {
           setPlayer((prev) => !prev);
@@ -210,6 +233,10 @@ const Game = ({ ready, socket, nameFromServer }) => {
           {nameFromServer && nameFromServer.length} people are in this lobby
         </Typography>
         <h3>This is Client Timer {clientTimer}</h3>
+        <h2>
+          This is {playerName} score {yourScore}
+          This is {opponentName}'s score {opponentScore}
+        </h2>
       </div>
     </>
   );

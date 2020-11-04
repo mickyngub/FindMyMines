@@ -25,9 +25,9 @@ const GamePage = ({ location }) => {
         console.log(status);
       }
     });
-    if (nameFromServer.indexOf(location.state.username) === -1) {
-      socket.emit("name-of-player", location.state.username);
-    }
+    // if (nameFromServer.indexOf(location.state.username) === -1) {
+    socket.emit("name-of-player", location.state.username);
+    // }
   }, []);
   return (
     <div className={`center`}>
@@ -39,7 +39,12 @@ const GamePage = ({ location }) => {
         </Typography>{" "}
         {/* !! With the id {location.state.id} */}
       </h3>
-      <Game ready={status} socket={socket} nameFromServer={nameFromServer} />
+      <Game
+        playerName={location.state.username}
+        ready={status}
+        socket={socket}
+        nameFromServer={nameFromServer}
+      />
     </div>
   );
 };
