@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
+import Button from "@material-ui/core/Button";
 
 import "./Game.css";
 import bombPic from "../Pics/bombPic.png";
@@ -91,7 +92,7 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
     if (arrayRandom.indexOf(1) === -1) {
       socket.emit("gameEnd");
     }
-    // setIsClicked(true);
+    setIsClicked(true);
   };
 
   useEffect(() => {
@@ -132,15 +133,29 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
   return (
     <>
       {/* <Scoreboard nameFromServer={nameFromServer} /> */}
+      {gameStart ? (
+        <Typography variant="h4">
+          <span style={{ margin: "3vw" }}>
+            {playerName}'s score {yourScore}
+          </span>
+          <span style={{ margin: "3vw" }}>
+            {opponentName}'s score {opponentScore}
+          </span>
+        </Typography>
+      ) : (
+        ""
+      )}
+      <Button
+        variant="outlined"
+        color="primary"
+        className={`start-button${ready ? "-yes" : "-no"} ${
+          gameStart ? "start-no" : ""
+        } `}
+        onClick={generateBomb}
+      >
+        <Typography variant="button">Start Game</Typography>
+      </Button>
       <div className={`center ${player ? "is-playing" : "not-playing"}`}>
-        <button
-          className={`start-button${ready ? "-yes" : "-no"} ${
-            gameStart ? "start-no" : ""
-          } `}
-          onClick={generateBomb}
-        >
-          Start Game
-        </button>
         <br />
         {arrayRandom}
         {console.log("this is arrayRandom", arrayRandom)}
@@ -223,9 +238,12 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
           ""
         )} */}
         {gameStart ? (
-          <Typography variant="h4">
-            {player ? "Your turn" : "Opponent's turn"}
-          </Typography>
+          <>
+            <Typography variant="h3">
+              {player ? "Your turn" : "Opponent's turn"}
+            </Typography>
+            <Typography variant="h5">Timer {clientTimer}</Typography>
+          </>
         ) : (
           ""
         )}
@@ -251,11 +269,6 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
         <Typography variant="h3">
           {nameFromServer && nameFromServer.length} people are in this lobby
         </Typography>
-        <h3>This is Client Timer {clientTimer}</h3>
-        <h2>
-          This is {playerName} score {yourScore}
-          This is {opponentName}'s score {opponentScore}
-        </h2>
       </div>
     </>
   );

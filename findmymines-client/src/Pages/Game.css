@@ -13,7 +13,7 @@
 }
 
 .start-button-no {
-  display: none;
+  display: none !important;
 }
 
 .start-button-yes {
@@ -31,7 +31,7 @@
 } */
 
 .start-no {
-  display: none;
+  display: none !important;
 }
 /* align-items: baseline; */
 

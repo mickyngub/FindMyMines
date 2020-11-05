@@ -31,14 +31,12 @@ const GamePage = ({ location }) => {
   }, []);
   return (
     <div className={`center`}>
-      Hey welcome to FindMyMines by Micky-Pinn-Boss
-      <h3>
-        Welcome to our game, {` `}
-        <Typography variant="h1" gutterBottom>
-          {location.state.username}
-        </Typography>{" "}
-        {/* !! With the id {location.state.id} */}
-      </h3>
+      <Typography variant="h1">FindMyMines by Micky-Pinn-Boss</Typography>{" "}
+      <Typography variant="h2">Welcome to our game,</Typography>
+      <Typography variant="h1" gutterBottom>
+        {location.state.username}
+      </Typography>{" "}
+      {/* !! With the id {location.state.id} */}
       <Game
         playerName={location.state.username}
         ready={status}
