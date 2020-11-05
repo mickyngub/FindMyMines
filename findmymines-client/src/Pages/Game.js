@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+//import from library called material-ui to make it looks nicer
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
@@ -9,44 +10,50 @@ import "./Game.css";
 import bombPic from "../Pics/bombPic.png";
 import notBombPic from "../Pics/notBombPic.jpg";
 
+//main function of this file
 const Game = ({ ready, socket, nameFromServer, playerName }) => {
   let arrayBombValue = [];
   let opponentName = "";
+  //array to tell where the bomb is
   const [arrayRandom, setArrayRandom] = useState([]);
   const [gameStart, setGameStart] = useState(false);
+  //state to tell if this is client's turn
   const [player, setPlayer] = useState(false);
   const [yourScore, setYourScore] = useState(0);
   const [opponentScore, setOpponentScore] = useState(0);
+  //Timer is controls by the server in the index.js, Clients just need to display the value
   const [clientTimer, setClientTimer] = useState(10);
+  //If isClicked is true then client cannot click the grid anymore in this turn
   const [isClicked, setIsClicked] = useState(false);
+  //whether win or lose
   const [resultGame, setResultGame] = useState("");
   const [gameEnd, setGameEnd] = useState(false);
-  // const [numberOfGames, setNumberOfGames] = useState(0);
+
+  //get called once the start game button is clicked to generate where the bomb is
   const generateBomb = () => {
-    // setNumberOfGames((prev) => prev + 1);
-    setYourScore(0);
-    setOpponentScore(0);
-    setResultGame("");
-    setIsClicked(false);
+    clearOldSession();
     for (let i = 0; i < 36; i++) {
-      // let bombValue = Math.floor(Math.random() * 2);
-      if (i < 11) {
+      //This i value controls how many bombs are in the grid e.g. if i === 3 then there are three bombs
+      if (i < 3) {
         arrayBombValue.push(1);
       } else {
         arrayBombValue.push(0);
       }
-      // arrayBombValue.push(bombValue);
     }
+    //shuffle where the bombs are
     arrayBombValue = shuffleBomb(arrayBombValue);
-    setArrayRandom((prev) => (prev = arrayBombValue));
+    setArrayRandom(arrayBombValue);
     socket.emit("bombLocation", arrayBombValue);
     setGameStart(true);
+    //Random who is the first player
     let randomPlayerValue = Math.random();
-    console.log("this is random value", randomPlayerValue);
     socket.emit("gameStart", randomPlayerValue);
+
     if (randomPlayerValue >= 0.5) {
+      //The player who clicked start button is the start player
       setPlayer(true);
     } else {
+      //The player who clicked start button is not the start player
       setPlayer(false);
     }
   };
@@ -82,32 +89,32 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
   // 2 is not bomb and clicked
   // 3 is bomb and clicked
   const notBombIsClicked = (index, arrayRandom) => {
-    console.log("value before not bomb", arrayRandom);
     arrayRandom[index] = 2;
-    console.log("value after not bomb", arrayRandom);
     setArrayRandom(arrayRandom);
-
     socket.emit("bombLocation", arrayRandom);
     setIsClicked(true);
   };
   const bombIsClicked = (index, arrayRandom) => {
-    console.log("value before bomb", arrayRandom);
-
     arrayRandom[index] = 3;
-    console.log("value after bomb", arrayRandom);
     setArrayRandom(arrayRandom);
     socket.emit("bombLocation", arrayRandom);
     setYourScore((prev) => prev + 1);
     socket.emit("plusScore");
+    //If there are no value of 1 left in the array that means the game has ended
     if (arrayRandom.indexOf(1) === -1) {
       socket.emit("gameEnd");
     }
     setIsClicked(true);
   };
 
+  const clearOldSession = () => {
+    setYourScore(0);
+    setOpponentScore(0);
+    setResultGame("");
+    setIsClicked(false);
+  };
+
   socket.on("gameEndFromServer", () => {
-    console.log("your score is", yourScore);
-    console.log("opponent score is", opponentScore);
     if (yourScore > opponentScore) {
       setResultGame("You won!!!");
     } else {
@@ -117,23 +124,18 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
     setGameStart(false);
     setGameEnd(true);
   });
-
+  //This useEffect function only run once, to mount the functions that wait for the connection from the server
   useEffect(() => {
     socket.on("timerFromServer", (timer) => {
       setClientTimer(timer);
-      // console.log("this is timer in client", timer);
-      if (timer == 10) {
+      if (timer === 10) {
         console.log("setPlayer");
         setPlayer((prev) => !prev);
         setIsClicked(false);
       }
-      // setPlayer((prev) => !prev);
     });
     socket.on("gameStartFromServer", (randomPlayerValue) => {
-      setYourScore(0);
-      setOpponentScore(0);
-      setResultGame("");
-      setIsClicked(false);
+      clearOldSession();
       setGameStart(true);
       if (randomPlayerValue >= 0.5) {
         setPlayer(false);
@@ -154,7 +156,6 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
 
   return (
     <>
-      {/* <Scoreboard nameFromServer={nameFromServer} /> */}
       {gameStart || gameEnd ? (
         <Typography variant="h4">
           <span style={{ margin: "3vw" }}>
@@ -183,9 +184,11 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
           player ? "is-playing" : "not-playing"
         }`}
       >
+        {/* This is the array value of where the bomb, notbomb, and which grids have
+        been clicked */}
         {arrayRandom}
-        {/* {console.log("this is arrayRandom", arrayRandom)} */}
         <div>
+          {/* The grids are rendered based on the value in the array */}
           <Grid container spacing={0} className="grid-container">
             {arrayRandom.map((value, index) => {
               if (value === 1) {
@@ -195,7 +198,6 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
                     xs={2}
                     onClick={() => {
                       bombIsClicked(index, arrayRandom);
-                      console.log("bomb is clicked", index);
                     }}
                     className={`${
                       player && !isClicked ? "can-click" : "cannot-click"
@@ -212,7 +214,6 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
                     xs={2}
                     onClick={() => {
                       notBombIsClicked(index, arrayRandom);
-                      console.log("NOT bomb is clicked", index);
                     }}
                     className={`${
                       player && !isClicked ? "can-click" : "cannot-click"
@@ -229,7 +230,11 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
                     xs={2}
                     className={`${player ? "can-click" : "cannot-click"}`}
                   >
-                    <img className="pic" src={notBombPic}></img>
+                    <img
+                      className="pic"
+                      src={notBombPic}
+                      alt="notBombPic"
+                    ></img>
                   </Grid>
                 );
               } else if (value === 3) {
@@ -239,7 +244,7 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
                     xs={2}
                     className={`${player ? "can-click" : "cannot-click"}`}
                   >
-                    <img className="pic" src={bombPic}></img>
+                    <img className="pic" src={bombPic} alt="bombPic"></img>
                   </Grid>
                 );
               } else {
@@ -248,21 +253,8 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
             })}
           </Grid>
         </div>
-        {/* <Timer gameStart={gameStart} socket={socket} /> */}
       </div>
       <div>
-        {/* {gameStart ? (
-          <Typography variant="h4">
-            {nameFromServer[1] && player === false
-              ? nameFromServer[1].name + "'s turn"
-              : ""}
-            {nameFromServer[0] && player === true
-              ? nameFromServer[0].name + "'s turn"
-              : ""}
-          </Typography>
-        ) : (
-          ""
-        )} */}
         {gameStart ? (
           <>
             <Typography variant="h3">
@@ -278,15 +270,8 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
         ) : (
           ""
         )}
-        {/* <button
-        onClick={() => {
-          setPlayer((prev) => !prev);
-        }}
-      >
-        Switch Player
-      </button> */}
 
-        <Typography variant="h3">
+        <Typography style={{ "margin-top": "3vh" }} variant="h3">
           Players in lobby :
           {nameFromServer &&
             nameFromServer.map((user, index) => {
@@ -300,7 +285,9 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
         <Typography variant="h3">
           {nameFromServer && nameFromServer.length} people are in this lobby
         </Typography>
-        {resultGame}
+        <Typography style={{ "margin-top": "6vh" }} variant="h2">
+          {resultGame}
+        </Typography>
       </div>
     </>
   );

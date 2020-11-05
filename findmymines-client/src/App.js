@@ -6,6 +6,7 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import GamePage from "./Pages/GamePage";
 import NamePage from "./Pages/NamePage";
 
+//The App.js's main duty is to setup a route for the website
 const App = () => {
   return (
     <BrowserRouter>

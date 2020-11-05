@@ -17,7 +17,6 @@
 }
 
 .start-button-yes {
-  /* display: flex; */
   height: 10vh;
   width: 10vw;
 }
@@ -33,7 +32,6 @@
 .start-no {
   display: none !important;
 }
-/* align-items: baseline; */
 
 .is-playing {
   background-color: rgb(110, 248, 110);
@@ -45,13 +43,10 @@
 
 .can-click {
   border: 10px solid white;
-  /* background-color: rgb(164, 102, 209); */
 }
 
 .cannot-click {
   border: 10px solid white;
-
-  /* background-color: khaki; */
   pointer-events: none;
 }
 
@@ -60,5 +55,6 @@
 }
 
 .pic {
-  height: 10vh;
+  height: 100%;
+  width: 100%;
 }

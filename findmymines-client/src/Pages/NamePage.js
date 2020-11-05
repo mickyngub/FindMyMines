@@ -4,6 +4,8 @@ import "./NamePage.css";
 const NamePage = ({ history }) => {
   console.log(history);
   const [username, setUserName] = useState("");
+  //If go to GamePage button is click then it will redirect to GamePage.js with the username that has been filled out
+  //The id doesn't do anything, it was for the purpose of testing
   const onClickHandler = () => {
     history.push("/GamePage", { id: 1, username });
   };

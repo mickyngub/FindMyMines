@@ -31,39 +31,25 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("plusScoreFromServer");
   });
   socket.on("gameStart", (randomPlayerValue) => {
-    // clearInterval(interval);
-
     socket.broadcast.emit("gameStartFromServer", randomPlayerValue);
-
-    // if (numberOfGames < 2) {
     let timer = 9;
     interval = setInterval(() => {
       if (timer == -1) {
         timer = 10;
       }
-
       io.emit("timerFromServer", timer);
       console.log("emit timer zero from server every second");
       console.log("this is interval value", interval);
       console.log("this is timer value in server", timer);
       timer = timer - 1;
     }, 1000);
-    // } else {
-    //   timer = 9;
-    // }
-
     return () => clearInterval(interval);
   });
   socket.on("gameEnd", () => {
     io.emit("gameEndFromServer");
     clearInterval(interval);
-    // console.log("clear interval!!!!");
   });
-  // socket.on("bombIsClicked", (index) => {});
 
-  // socket.on("timerZero", () => {
-  //   socket.emit("timerZeroFromServer");
-  // });
   socket.on("disconnect", () => {
     socket.emit("gameStart", "stopTimer");
     console.log("what is this", socket.id);
