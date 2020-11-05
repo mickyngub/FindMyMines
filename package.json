@@ -12,6 +12,7 @@
   "author": "Pichaya Puttekulangkura",
   "license": "ISC",
   "dependencies": {
+    "@material-ui/icons": "^4.9.1",
     "express": "^4.17.1",
     "fontsource-roboto": "^3.0.3",
     "socket.io": "^2.3.0"

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
+import PlayCircleOutlineIcon from "@material-ui/icons/PlayCircleOutline";
+import HourglassEmptyIcon from "@material-ui/icons/HourglassEmpty";
 
 import "./Game.css";
 import bombPic from "../Pics/bombPic.png";
@@ -17,7 +19,15 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
   const [opponentScore, setOpponentScore] = useState(0);
   const [clientTimer, setClientTimer] = useState(10);
   const [isClicked, setIsClicked] = useState(false);
+  const [resultGame, setResultGame] = useState("");
+  const [gameEnd, setGameEnd] = useState(false);
+  // const [numberOfGames, setNumberOfGames] = useState(0);
   const generateBomb = () => {
+    // setNumberOfGames((prev) => prev + 1);
+    setYourScore(0);
+    setOpponentScore(0);
+    setResultGame("");
+    setIsClicked(false);
     for (let i = 0; i < 36; i++) {
       // let bombValue = Math.floor(Math.random() * 2);
       if (i < 11) {
@@ -95,8 +105,20 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
     setIsClicked(true);
   };
 
+  socket.on("gameEndFromServer", () => {
+    console.log("your score is", yourScore);
+    console.log("opponent score is", opponentScore);
+    if (yourScore > opponentScore) {
+      setResultGame("You won!!!");
+    } else {
+      setResultGame("You lost!!!");
+    }
+    setArrayRandom([]);
+    setGameStart(false);
+    setGameEnd(true);
+  });
+
   useEffect(() => {
-    console.log("this is arrayRandom", arrayRandom);
     socket.on("timerFromServer", (timer) => {
       setClientTimer(timer);
       // console.log("this is timer in client", timer);
@@ -108,16 +130,16 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
       // setPlayer((prev) => !prev);
     });
     socket.on("gameStartFromServer", (randomPlayerValue) => {
+      setYourScore(0);
+      setOpponentScore(0);
+      setResultGame("");
+      setIsClicked(false);
       setGameStart(true);
       if (randomPlayerValue >= 0.5) {
         setPlayer(false);
       } else {
         setPlayer(true);
       }
-    });
-
-    socket.on("gameEndFromServer", () => {
-      setArrayRandom([]);
     });
 
     socket.on("bombFromServer", (arrayBombLocation) => {
@@ -133,7 +155,7 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
   return (
     <>
       {/* <Scoreboard nameFromServer={nameFromServer} /> */}
-      {gameStart ? (
+      {gameStart || gameEnd ? (
         <Typography variant="h4">
           <span style={{ margin: "3vw" }}>
             {playerName}'s score {yourScore}
@@ -148,6 +170,7 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
       <Button
         variant="outlined"
         color="primary"
+        startIcon={<PlayCircleOutlineIcon />}
         className={`start-button${ready ? "-yes" : "-no"} ${
           gameStart ? "start-no" : ""
         } `}
@@ -155,11 +178,14 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
       >
         <Typography variant="button">Start Game</Typography>
       </Button>
-      <div className={`center ${player ? "is-playing" : "not-playing"}`}>
-        <br />
+      <div
+        className={`center ${gameStart ? "" : "start-no"} ${
+          player ? "is-playing" : "not-playing"
+        }`}
+      >
         {arrayRandom}
-        {console.log("this is arrayRandom", arrayRandom)}
-        <div className="game">
+        {/* {console.log("this is arrayRandom", arrayRandom)} */}
+        <div>
           <Grid container spacing={0} className="grid-container">
             {arrayRandom.map((value, index) => {
               if (value === 1) {
@@ -242,7 +268,12 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
             <Typography variant="h3">
               {player ? "Your turn" : "Opponent's turn"}
             </Typography>
-            <Typography variant="h5">Timer {clientTimer}</Typography>
+            <span>
+              <Typography variant="h5">
+                <HourglassEmptyIcon />
+                Timer {clientTimer}
+              </Typography>
+            </span>
           </>
         ) : (
           ""
@@ -269,6 +300,7 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
         <Typography variant="h3">
           {nameFromServer && nameFromServer.length} people are in this lobby
         </Typography>
+        {resultGame}
       </div>
     </>
   );

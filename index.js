@@ -7,6 +7,8 @@ app.get("/", (req, res) => {
 });
 
 let userConnectedArray = [];
+var interval;
+
 io.on("connection", (socket) => {
   io.emit("received-connection", "YOU are connected to the server");
   console.log("a user has connected");
@@ -29,24 +31,33 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("plusScoreFromServer");
   });
   socket.on("gameStart", (randomPlayerValue) => {
+    // clearInterval(interval);
+
     socket.broadcast.emit("gameStartFromServer", randomPlayerValue);
+
+    // if (numberOfGames < 2) {
     let timer = 9;
-    const interval = setInterval(() => {
+    interval = setInterval(() => {
       if (timer == -1) {
         timer = 10;
       }
 
       io.emit("timerFromServer", timer);
       console.log("emit timer zero from server every second");
-
+      console.log("this is interval value", interval);
       console.log("this is timer value in server", timer);
       timer = timer - 1;
     }, 1000);
+    // } else {
+    //   timer = 9;
+    // }
 
     return () => clearInterval(interval);
   });
   socket.on("gameEnd", () => {
     io.emit("gameEndFromServer");
+    clearInterval(interval);
+    // console.log("clear interval!!!!");
   });
   // socket.on("bombIsClicked", (index) => {});
 
