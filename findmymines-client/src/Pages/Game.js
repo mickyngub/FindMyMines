@@ -186,6 +186,7 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
       >
         {/* This is the array value of where the bomb, notbomb, and which grids have
         been clicked */}
+        {/* !!This is a little buggy since if one players click the grid, it doesn't update the value in that player's screen until another player selected another grid!! */}
         {arrayRandom}
         <div>
           {/* The grids are rendered based on the value in the array */}
