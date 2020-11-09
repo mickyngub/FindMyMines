@@ -45,6 +45,22 @@ io.on("connection", (socket) => {
     }, 1000);
     return () => clearInterval(interval);
   });
+  socket.on("changeTurn", () => {
+    clearInterval(interval);
+    let timer = 9;
+    io.emit("changeTurnFromServer");
+    interval = setInterval(() => {
+      if (timer == -1) {
+        timer = 10;
+      }
+      io.emit("timerFromServer", timer);
+      console.log("emit timer zero from server every second");
+      console.log("this is interval value", interval);
+      console.log("this is timer value in server", timer);
+      timer = timer - 1;
+    }, 1000);
+    return () => clearInterval(interval);
+  });
   socket.on("gameEnd", () => {
     io.emit("gameEndFromServer");
     clearInterval(interval);

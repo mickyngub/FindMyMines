@@ -93,6 +93,7 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
     setArrayRandom(arrayRandom);
     socket.emit("bombLocation", arrayRandom);
     setIsClicked(true);
+    socket.emit("changeTurn");
   };
   const bombIsClicked = (index, arrayRandom) => {
     arrayRandom[index] = 3;
@@ -100,6 +101,7 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
     socket.emit("bombLocation", arrayRandom);
     setYourScore((prev) => prev + 1);
     socket.emit("plusScore");
+    socket.emit("changeTurn");
     //If there are no value of 1 left in the array that means the game has ended
     if (arrayRandom.indexOf(1) === -1) {
       socket.emit("gameEnd");
@@ -126,6 +128,10 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
   });
   //This useEffect function only run once, to mount the functions that wait for the connection from the server
   useEffect(() => {
+    socket.on("changeTurnFromServer", (timer) => {
+      setPlayer((prev) => !prev);
+      setIsClicked(false);
+    });
     socket.on("timerFromServer", (timer) => {
       setClientTimer(timer);
       if (timer === 10) {
