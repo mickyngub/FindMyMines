@@ -1,0 +1,143 @@
+.center {
+  text-align: center;
+}
+
+.welcomemsg {
+  text-align: center;
+  font-size: 6vh;
+  font-weight: bold;
+  font-family: 'Times New Roman', Times, serif;
+  margin-top: 5%;
+}
+
+.txt {
+  text-align: center;
+  background-color: aliceblue;
+  opacity: 80%;
+  width: 50%;
+  font-size: 4vh;
+  text-align: center;
+  font-family: fantasy;
+}
+.dark-mode .txt{
+  text-align: center;
+  background-color: rgb(47, 60, 71);
+  opacity: 80%;
+  width: 50%;
+  font-size: 4vh;
+  text-align: center;
+  font-family: fantasy;
+}
+
+.player1 {
+  background-color: burlywood;
+}
+
+.player2 {
+  background-color: chartreuse;
+}
+
+
+body {
+  background-color: #FAFAFA;
+  animation: color 8s linear infinite;
+}
+
+.candy{
+  overflow: hidden;
+  display: flex;
+  opacity: 0;
+  margin: calc(50vh - 150px) auto 0 auto;
+  width: 100px;
+  height: 300px;
+  border-radius: 100px;
+  border-bottom-left-radius: 0px; border-bottom-right-radius: 0px;
+  background-color: #FAFAFA;
+  box-shadow: 40px 20px 15px -30px rgba(255,0,0,0.1);
+  transform: rotate(90deg);
+  animation: PARTY 8s cubic-bezier(.87,-.41,.19,1.44) infinite;
+}
+
+.candy-loader{
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  align-self: flex-end;
+  box-shadow: 0px 0px 10px rgba(255,50,0,0.8) inset;
+  background: nth(#D33144, #FFFFEE, 1);
+  background: repeating-linear-gradient(45deg, 
+              nth(#D33144, #FFFFEE, 2), 
+              nth(#D33144, #FFFFEE, 2) 15px, 
+              nth(#D33144, #FFFFEE, 1) 15px,
+              nth(#D33144, #FFFFEE, 1) 30px);
+  animation: load 8s ease-in infinite;
+}
+  .candy-loader :after{
+    content:"";
+    background-color: #FAFAFA;
+    width: 100px/2;
+    height: 300px - (300px/10);
+    border-radius: 50px;
+    border-bottom-left-radius: 0px;   border-bottom-right-radius: 0px;
+    display: flex;
+    align-self: flex-end;
+    animation: color 8s linear infinite;
+  } 
+  .candy-loader:before{
+    content:"";  
+    background-color: #FAFAFA;
+    width: 100px/4;
+    height: 300px*0.7;
+    display: flex;
+    align-self: flex-end;
+    animation: color 8s linear infinite;
+  }
+
+@keyframes load{
+  0%{
+    height: 0%;
+  }
+  50%{
+    height: 100%;
+  }
+}
+
+@keyframes PARTY{
+  5%{
+    opacity: 1;
+  }
+  50%{
+    transform: rotate(90deg) scale(1);
+  }
+  60%{
+    transform: rotate(-10deg) scale(1);
+  }
+  70%{
+    transform: rotate(20deg) scale(1);
+  }
+  80%{
+    transform: rotate(-10deg) scale(1);
+  }
+  90%{
+    transform: rotate(30deg) scale(1);
+    opacity: 1;
+  }
+  100%{
+    transform: rotate(-180deg) scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes color{
+  55%{
+    background-color: #FAFAFA;
+  }
+  57%{
+    background-color: #31D354;
+  }
+  95%{
+    background-color: #31D354;
+  }
+}
