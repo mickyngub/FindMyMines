@@ -1,0 +1,18 @@
+.App {
+  text-align: center;
+  /*background-color: khaki;*/
+  /*background-image: url("https://i.pinimg.com/originals/7a/c1/bd/7ac1bd972b647b3093e86fcd23fe98af.jpg");*/
+}
+
+.App-item {
+  margin-top: 12%;
+  text-align: center;
+}
+
+.App-terms {
+  margin-top: 70px;
+  margin-left: 20%;
+  text-align: center;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: 20px;
+}

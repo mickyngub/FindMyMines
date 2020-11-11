@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./NamePage.css";
+import Snowflakes from "./SnowFlakes.js";
 
 const NamePage = ({ history }) => {
   console.log(history);
@@ -11,19 +12,25 @@ const NamePage = ({ history }) => {
   };
   return (
     <div className="center-namepage">
-      <h3 style={{ width: "50vw", height: "10vh" }}>What's your name?</h3>
-      <input
-        style={{ width: "50vw", height: "10vh" }}
-        placeholder="Please Enter Your Name"
-        onChange={(e) => setUserName(e.target.value)}
-      ></input>
-
-      <button
-        style={{ width: "50vw", height: "10vh" }}
-        onClick={onClickHandler}
-      >
-        Go to GamePage
-      </button>
+      <div className="introText">Let's find your friend's MINES :)</div>
+      <item className="App-item">
+        <ul id="messages"></ul>
+        <div onClick={onClickHandler}></div>
+        <div className="TypeName">Please type your name first</div>
+        <div>
+          <input
+            className="block"
+            onChange={(e) => setUserName(e.target.value)}
+            type="text"
+            placeholder="Please enter your name"
+          ></input>
+        </div>
+        <button className="button" onClick={onClickHandler}>
+          Submit
+        </button>
+        <div>This is your name {username}</div>
+      </item>
+      <Snowflakes></Snowflakes>
     </div>
   );
 };

@@ -8,6 +8,9 @@ import HourglassEmptyIcon from "@material-ui/icons/HourglassEmpty";
 
 import "./Game.css";
 import bombPic from "../Pics/bombPic.png";
+import coin from "../Pics/coin.jpeg";
+import trophy from "../Pics/trophy.png";
+import timer from "../Pics/timer.jpg";
 import notBombPic from "../Pics/notBombPic.jpg";
 
 //main function of this file
@@ -34,8 +37,14 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
     clearOldSession();
     for (let i = 0; i < 36; i++) {
       //This i value controls how many bombs are in the grid e.g. if i === 3 then there are three bombs
-      if (i < 3) {
+      if (i < 10) {
         arrayBombValue.push(1);
+      } else if (i < 12) {
+        arrayBombValue.push(4);
+      } else if (i < 13) {
+        arrayBombValue.push(8);
+      } else if (i < 16) {
+        arrayBombValue.push(6);
       } else {
         arrayBombValue.push(0);
       }
@@ -108,12 +117,41 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
     }
     setIsClicked(true);
   };
+  const CoinIsClicked = (index, arrayRandom) => {
+    arrayRandom[index] = 5;
+    setArrayRandom(arrayRandom);
+    socket.emit("bombLocation", arrayRandom);
+    setYourScore((prev) => prev - 1);
+    socket.emit("deductScore");
+    socket.emit("changeTurn");
+    setIsClicked(true);
+  };
+  const TimerIsClicked = (index, arrayRandom) => {
+    arrayRandom[index] = 7;
+    setArrayRandom(arrayRandom);
+    socket.emit("bombLocation", arrayRandom);
+    socket.emit("DoubleTime");
+  };
+  const TrophyIsClicked = (index, arrayRandom) => {
+    arrayRandom[index] = 8;
+    setArrayRandom(arrayRandom);
+    socket.emit("bombLocation", arrayRandom);
+    socket.emit("gameEndByTrophy");
+    setResultGame("You won!!!");
+  };
 
   const clearOldSession = () => {
     setYourScore(0);
     setOpponentScore(0);
     setResultGame("");
     setIsClicked(false);
+  };
+  const clearByReset = () => {
+    setYourScore(0);
+    setOpponentScore(0);
+    setResultGame("");
+    setIsClicked(false);
+    socket.emit("gameReset");
   };
 
   socket.on("gameEndFromServer", () => {
@@ -122,6 +160,12 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
     } else {
       setResultGame("You lost!!!");
     }
+    setArrayRandom([]);
+    setGameStart(false);
+    setGameEnd(true);
+  });
+  socket.on("gameEndByTrophyFromServer", () => {
+    setResultGame("You won!!!");
     setArrayRandom([]);
     setGameStart(false);
     setGameEnd(true);
@@ -149,7 +193,9 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
         setPlayer(true);
       }
     });
-
+    socket.on("gameResetFromServer", () => {
+      clearOldSession();
+    });
     socket.on("bombFromServer", (arrayBombLocation) => {
       console.log("io.on received bombFromServer", arrayBombLocation);
       setArrayRandom(arrayBombLocation);
@@ -157,6 +203,18 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
 
     socket.on("plusScoreFromServer", () => {
       setOpponentScore((prev) => prev + 1);
+    });
+    socket.on("deductScoreFromServer", () => {
+      setOpponentScore((prev) => prev - 1);
+    });
+
+    socket.on("DoubleTimerFromServer", (timer) => {
+      setClientTimer(timer);
+      if (timer === -1) {
+        console.log("setPlayer");
+        setPlayer((prev) => !prev);
+        setIsClicked(false);
+      }
     });
   }, []);
 
@@ -174,26 +232,28 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
       ) : (
         ""
       )}
-      <Button
+      <button
         variant="outlined"
-        color="primary"
+        color="danger"
         startIcon={<PlayCircleOutlineIcon />}
-        className={`start-button${ready ? "-yes" : "-no"} ${
+        className={`button ${ready ? "-yes" : "start-no"} ${
           gameStart ? "start-no" : ""
         } `}
         onClick={generateBomb}
       >
-        <Typography variant="button">Start Game</Typography>
-      </Button>
+        GO!
+      </button>
       <div
         className={`center ${gameStart ? "" : "start-no"} ${
           player ? "is-playing" : "not-playing"
         }`}
       >
-        {/* This is the array value of where the bomb, notbomb, and which grids have
+        <div>
+          {/* This is the array value of where the bomb, notbomb, and which grids have
         been clicked */}
-        {/* !!This is a little buggy since if one players click the grid, it doesn't update the value in that player's screen until another player selected another grid!! */}
-        {arrayRandom}
+          {/* !!This is a little buggy since if one players click the grid, it doesn't update the value in that player's screen until another player selected another grid!! */}
+          {arrayRandom}
+        </div>
         <div>
           {/* The grids are rendered based on the value in the array */}
           <Grid container spacing={0} className="grid-container">
@@ -206,12 +266,11 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
                     onClick={() => {
                       bombIsClicked(index, arrayRandom);
                     }}
-                    className={`${
+                    className={`Grid-wrapper ${
                       player && !isClicked ? "can-click" : "cannot-click"
                     }`}
                   >
-                    <h3>Bomb!</h3>
-                    {/* <h2>Click me!</h2> */}
+                    B{/* <h2>Click me!</h2> */}
                   </Grid>
                 );
               } else if (value === 0) {
@@ -222,12 +281,11 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
                     onClick={() => {
                       notBombIsClicked(index, arrayRandom);
                     }}
-                    className={`${
+                    className={`Grid-wrapper ${
                       player && !isClicked ? "can-click" : "cannot-click"
                     }`}
                   >
-                    {/* <h3>not a bomb!</h3> */}
-                    <h2>Click me!</h2>
+                    {/* <h3>not a bomb!</h3> */}!
                   </Grid>
                 );
               } else if (value === 2) {
@@ -235,7 +293,9 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
                   <Grid
                     item
                     xs={2}
-                    className={`${player ? "can-click" : "cannot-click"}`}
+                    className={`Grid-wrapper ${
+                      player ? "can-click" : "cannot-click"
+                    }`}
                   >
                     <img
                       className="pic"
@@ -249,9 +309,92 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
                   <Grid
                     item
                     xs={2}
-                    className={`${player ? "can-click" : "cannot-click"}`}
+                    className={`Grid-wrapper ${
+                      player ? "can-click" : "cannot-click"
+                    }`}
                   >
                     <img className="pic" src={bombPic} alt="bombPic"></img>
+                  </Grid>
+                );
+              } else if (value === 4) {
+                return (
+                  <Grid
+                    item
+                    xs={2}
+                    onClick={() => {
+                      CoinIsClicked(index, arrayRandom);
+                    }}
+                    className={`Grid-wrapper ${
+                      player && !isClicked ? "can-click" : "cannot-click"
+                    }`}
+                  >
+                    C
+                  </Grid>
+                );
+              } else if (value === 5) {
+                return (
+                  <Grid
+                    item
+                    xs={2}
+                    className={`Grid-wrapper ${
+                      player ? "can-click" : "cannot-click"
+                    }`}
+                  >
+                    <img className="pic" src={coin} alt="coin"></img>
+                  </Grid>
+                );
+              } else if (value === 6) {
+                return (
+                  <Grid
+                    item
+                    xs={2}
+                    onClick={() => {
+                      TimerIsClicked(index, arrayRandom);
+                    }}
+                    className={`Grid-wrapper ${
+                      player && !isClicked ? "can-click" : "cannot-click"
+                    }`}
+                  >
+                    TM
+                  </Grid>
+                );
+              } else if (value === 7) {
+                return (
+                  <Grid
+                    item
+                    xs={2}
+                    className={`Grid-wrapper ${
+                      player ? "can-click" : "cannot-click"
+                    }`}
+                  >
+                    <img className="pic" src={timer} alt="timer"></img>
+                  </Grid>
+                );
+              } else if (value === 8) {
+                return (
+                  <Grid
+                    item
+                    xs={2}
+                    onClick={() => {
+                      TrophyIsClicked(index, arrayRandom);
+                    }}
+                    className={`Grid-wrapper ${
+                      player && !isClicked ? "can-click" : "cannot-click"
+                    }`}
+                  >
+                    T
+                  </Grid>
+                );
+              } else if (value === 9) {
+                return (
+                  <Grid
+                    item
+                    xs={2}
+                    className={`Grid-wrapper ${
+                      player ? "can-click" : "cannot-click"
+                    }`}
+                  >
+                    <img className="pic" src={trophy} alt="trophy"></img>
                   </Grid>
                 );
               } else {
@@ -260,25 +403,23 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
             })}
           </Grid>
         </div>
+        <div>
+          <button onClick={clearByReset}>Reset</button>
+        </div>
       </div>
       <div>
         {gameStart ? (
           <>
-            <Typography variant="h3">
-              {player ? "Your turn" : "Opponent's turn"}
-            </Typography>
+            <div>{player ? "Your turn" : "Opponent's turn"}</div>
             <span>
-              <Typography variant="h5">
-                <HourglassEmptyIcon />
-                Timer {clientTimer}
-              </Typography>
+              <HourglassEmptyIcon />
+              Timer {clientTimer}
             </span>
           </>
         ) : (
           ""
         )}
-
-        <Typography style={{ "margin-top": "3vh" }} variant="h3">
+        <div className="text">
           Players in lobby :
           {nameFromServer &&
             nameFromServer.map((user, index) => {
@@ -288,13 +429,11 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
                 return " " + user.name;
               }
             })}{" "}
-        </Typography>
-        <Typography variant="h3">
-          {nameFromServer && nameFromServer.length} people are in this lobby
-        </Typography>
-        <Typography style={{ "margin-top": "6vh" }} variant="h2">
-          {resultGame}
-        </Typography>
+          <div className="text2">
+            {nameFromServer && nameFromServer.length} people are in this lobby
+          </div>
+        </div>
+        <div>{resultGame}</div>
       </div>
     </>
   );

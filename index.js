@@ -30,6 +30,9 @@ io.on("connection", (socket) => {
   socket.on("plusScore", () => {
     socket.broadcast.emit("plusScoreFromServer");
   });
+  socket.on("deductScore", () => {
+    socket.broadcast.emit("deductScoreFromServer");
+  });
   socket.on("gameStart", (randomPlayerValue) => {
     socket.broadcast.emit("gameStartFromServer", randomPlayerValue);
     let timer = 9;
@@ -61,11 +64,36 @@ io.on("connection", (socket) => {
     }, 1000);
     return () => clearInterval(interval);
   });
+
+  socket.on("DoubleTime", () => {
+    clearInterval(interval);
+    let timer = 20;
+    interval = setInterval(() => {
+      if (timer == -1) {
+        timer = 10;
+        io.emit("changeTurnFromServer");
+      }
+      io.emit("timerFromServer", timer);
+      console.log("emit timer zero from server every second");
+      console.log("this is interval value", interval);
+      console.log("this is timer value in server (Double is activated)", timer);
+      timer = timer - 1;
+    }, 1000);
+    return () => clearInterval(interval);
+  });
+
   socket.on("gameEnd", () => {
     io.emit("gameEndFromServer");
     clearInterval(interval);
   });
-
+  socket.on("gameEndByTrophy", () => {
+    io.emit("gameEndByTrophyFromServer");
+    clearInterval(interval);
+  });
+  socket.on("gameReset", () => {
+    socket.broadcast.emit("gameResetFromServer");
+    clearInterval(interval);
+  });
   socket.on("disconnect", () => {
     socket.emit("gameStart", "stopTimer");
     console.log("what is this", socket.id);
