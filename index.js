@@ -64,7 +64,13 @@ io.on("connection", (socket) => {
     }, 1000);
     return () => clearInterval(interval);
   });
-
+  socket.on("SetScoreBySurrender", () => {
+    socket.broadcast.emit("SetScoreBySurrenderFromServer");
+  });
+  socket.on("gameEndBySurrender2", () => {
+    socket.broadcast.emit("gameEndBySurrender2FromServer");
+    clearInterval(interval);
+  });
   socket.on("DoubleTime", () => {
     clearInterval(interval);
     let timer = 20;
@@ -81,7 +87,6 @@ io.on("connection", (socket) => {
     }, 1000);
     return () => clearInterval(interval);
   });
-
   socket.on("gameEnd", () => {
     io.emit("gameEndFromServer");
     clearInterval(interval);
@@ -90,9 +95,12 @@ io.on("connection", (socket) => {
     io.emit("gameEndByTrophyFromServer");
     clearInterval(interval);
   });
+  socket.on("SetScoreByTrophy", () => {
+    socket.broadcast.emit("SetScoreByTrophyFromServer");
+  });
   socket.on("gameReset", () => {
-    socket.broadcast.emit("gameResetFromServer");
     clearInterval(interval);
+    io.emit("gameStartFromServer");
   });
   socket.on("disconnect", () => {
     socket.emit("gameStart", "stopTimer");

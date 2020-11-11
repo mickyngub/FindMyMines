@@ -20,18 +20,21 @@ const WelcomePage = ({ history }) => {
   const playSound = audioFile => {
     audioFile.play();
   };
-  const [state, setState] = React.useState({
-    checked: true
-  });
-  const togglePlay = () => {
-    setState({ play: !state.play }, () => {
-      state.play ? SAudio.play() : SAudio.pause();
-    });
-    console.log(state.play);
+
+  const stopSound = audioFile => {
+    audioFile.pause();
+  };
+  var toggleflag=false;
+  const togglePlay1 = () => {
+    if(toggleflag){
+      stopSound(SAudio);
+      toggleflag=!toggleflag;
+    }else{
+      playSound(SAudio);
+      toggleflag=!toggleflag;
+    }
   }
-  
-  
-  
+
   return (
     <div className="App" style={{ marginTop: "40vh"}}>
       <div className="Wtxt">
@@ -50,8 +53,13 @@ const WelcomePage = ({ history }) => {
           <img src="https://raw.githubusercontent.com/nueymoo/toggle-switch-css/master/moon.png" alt="moon" class="toggle-2__button--icon"></img>
         </span>
         </label>
+        <label for="toggle-3" class="toggle-3">
+          <input type="checkbox" name="toggle-3" id="toggle-3" class="toggle-3__input" onClick={togglePlay1} ></input>
+          <span class="toggle-3__button">
+            <img src="https://raw.githubusercontent.com/nueymoo/toggle-switch-css/master/correct.png" alt="correct" class="toggle-3__button--correct"></img>
+          </span>
+        </label>
       </section>
-      <button onClick={() => playSound(SAudio)}>Sound</button>
     <Snowflakes></Snowflakes>
     </div>
   );

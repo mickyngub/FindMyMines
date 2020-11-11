@@ -17,6 +17,7 @@ const HowToPage = ({ history }) => {
         <div>Importantly! Find the bombs as many as you can. GOOD LUCK :)</div>
       </item>
       <button className= "button" onClick={() => history.push('/NamePage')}><span>Begin the game!</span></button>
+      <button className= "button" style={{marginLeft:"2%"}} onClick={() => history.push('/')}><span>Back to Home</span></button>
       <Snowflakes></Snowflakes>
     </div>
     );
