@@ -9,13 +9,13 @@
 }
 
 .Wtxt {
-  font-size: 10vh;
+  font-size: 5vh;
   font-weight: bold;
   font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
   text-align: center;
 }
 .Wtxt2 {
-  font-size: 6vh;
+  font-size: 3vh;
   font-weight: bold;
   font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
   text-align: center;
@@ -69,10 +69,10 @@
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  min-width: 30%;
+  min-width: 27%;
   padding: 22px 33px;
   font-family: "Lobster", cursive;
-  font-size: 26px;
+  font-size: 16px;
   line-height: 26px;
   text-decoration: none;
   color: #fff;
@@ -156,10 +156,10 @@ body {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  min-width: 30%;
+  min-width: 27%;
   padding: 22px 33px;
   font-family: "Lobster", cursive;
-  font-size: 26px;
+  font-size: 16px;
   line-height: 26px;
   text-decoration: none;
   color: rgb(28, 68, 34);
@@ -244,4 +244,78 @@ section {
   content: "";
   left: 45px;
   background-color: #ffc700;
+}
+.toggle-3 {
+  font-size: 0.8rem;
+  display: inline-block;
+  vertical-align: top;
+  margin: 0 15px 0 0;
+}
+
+.toggle-3__input {
+  display: none;
+}
+
+.toggle-3__button {
+  position: relative;
+  display: inline-block;
+  font-family: "Roboto", sans-serif;
+  text-transform: uppercase;
+
+  width: 90px;
+  height: 30px;
+  background: #d2d2d2;
+  color: #fff;
+  border: solid 1px #d2d2d2;
+  border-radius: 7px;
+
+  padding: 5px 10px 5px 30px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.toggle-3__button::before {
+  position: absolute;
+  content: "";
+  top: 10px;
+  left: 10px;
+
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+
+  background: #fff;
+  border-radius: 100%;
+
+  transition: all 0.3s ease;
+}
+
+.toggle-3__button::after {
+  content: "Sound OFF";
+  position: absolute;
+  top: 10px;
+  left: 40px;
+  font-size: 0.8rem;
+}
+
+.toggle-3__button--correct {
+  position: absolute;
+  width: 12px;
+  top: 16px;
+  left: 14px;
+  visibility: hidden;
+}
+
+.toggle-3__input:checked + .toggle-3__button {
+  background: #2973cb;
+  border: #2973cb;
+  color: white;
+}
+
+.toggle-3__input:checked + .toggle-3__button > .toggle-3__button--correct {
+  visibility: visible;
+}
+
+.toggle-3__input:checked + .toggle-3__button::after {
+  content: "Sound ON";
 }

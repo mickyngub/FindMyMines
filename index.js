@@ -33,7 +33,11 @@ io.on("connection", (socket) => {
   socket.on("deductScore", () => {
     socket.broadcast.emit("deductScoreFromServer");
   });
+  socket.on("test", (result) => {
+    console.log("this is test result", result);
+  });
   socket.on("gameStart", (randomPlayerValue) => {
+    console.log(randomPlayerValue);
     socket.broadcast.emit("gameStartFromServer", randomPlayerValue);
     let timer = 9;
     interval = setInterval(() => {
@@ -41,9 +45,9 @@ io.on("connection", (socket) => {
         timer = 10;
       }
       io.emit("timerFromServer", timer);
-      console.log("emit timer zero from server every second");
-      console.log("this is interval value", interval);
-      console.log("this is timer value in server", timer);
+      // console.log("emit timer zero from server every second");
+      // console.log("this is interval value", interval);
+      // console.log("this is timer value in server", timer);
       timer = timer - 1;
     }, 1000);
     return () => clearInterval(interval);
@@ -64,7 +68,13 @@ io.on("connection", (socket) => {
     }, 1000);
     return () => clearInterval(interval);
   });
-
+  socket.on("SetScoreBySurrender", () => {
+    socket.broadcast.emit("SetScoreBySurrenderFromServer");
+  });
+  socket.on("gameEndBySurrender2", () => {
+    socket.broadcast.emit("gameEndBySurrender2FromServer");
+    clearInterval(interval);
+  });
   socket.on("DoubleTime", () => {
     clearInterval(interval);
     let timer = 20;
@@ -81,7 +91,6 @@ io.on("connection", (socket) => {
     }, 1000);
     return () => clearInterval(interval);
   });
-
   socket.on("gameEnd", () => {
     io.emit("gameEndFromServer");
     clearInterval(interval);
@@ -90,12 +99,15 @@ io.on("connection", (socket) => {
     io.emit("gameEndByTrophyFromServer");
     clearInterval(interval);
   });
+  socket.on("SetScoreByTrophy", () => {
+    socket.broadcast.emit("SetScoreByTrophyFromServer");
+  });
   socket.on("gameReset", () => {
-    socket.broadcast.emit("gameResetFromServer");
     clearInterval(interval);
+    io.emit("gameStartFromServer");
   });
   socket.on("disconnect", () => {
-    socket.emit("gameStart", "stopTimer");
+    // socket.emit("gameStart", "stopTimer");
     console.log("what is this", socket.id);
     console.log("a user disconnect");
     userConnectedArray = userConnectedArray.filter((obj) => {
