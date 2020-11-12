@@ -8,6 +8,7 @@ app.get("/", (req, res) => {
 
 let userConnectedArray = [];
 var interval;
+var numberBomb = 0;
 
 io.on("connection", (socket) => {
   io.emit("received-connection", "YOU are connected to the server");
@@ -33,9 +34,16 @@ io.on("connection", (socket) => {
   socket.on("deductScore", () => {
     socket.broadcast.emit("deductScoreFromServer");
   });
+  socket.on("showBomb", () => {
+    socket.broadcast.emit("deductNumBombFromServer");
+  });
+  socket.on("resetBomb", () => {
+    socket.broadcast.emit("resetBombFromServer");
+  })
   socket.on("gameStart", (randomPlayerValue) => {
     socket.broadcast.emit("gameStartFromServer", randomPlayerValue);
     let timer = 9;
+    let numberBomb = 6;
     interval = setInterval(() => {
       if (timer == -1) {
         timer = 10;
@@ -45,6 +53,7 @@ io.on("connection", (socket) => {
       console.log("this is interval value", interval);
       console.log("this is timer value in server", timer);
       timer = timer - 1;
+      console.log(numberBomb);
     }, 1000);
     return () => clearInterval(interval);
   });
@@ -64,6 +73,9 @@ io.on("connection", (socket) => {
     }, 1000);
     return () => clearInterval(interval);
   });
+  socket.on("showBomb", () => {
+    io.emit("")
+  });
   socket.on("SetScoreBySurrender", () => {
     socket.broadcast.emit("SetScoreBySurrenderFromServer");
   });
@@ -79,7 +91,7 @@ io.on("connection", (socket) => {
         timer = 10;
         io.emit("changeTurnFromServer");
       }
-      io.emit("timerFromServer", timer);
+      io.emit("timerFromServer2", timer);
       console.log("emit timer zero from server every second");
       console.log("this is interval value", interval);
       console.log("this is timer value in server (Double is activated)", timer);
@@ -87,12 +99,32 @@ io.on("connection", (socket) => {
     }, 1000);
     return () => clearInterval(interval);
   });
+  socket.on("Resume", (timer) => {
+    clearInterval(interval);
+    interval = setInterval(() => {
+      if (timer == -1) {
+        timer = 10;
+        io.emit("changeTurnFromServer");
+      }
+      io.emit("timerFromServer2", timer);
+      console.log("emit timer zero from server every second");
+      console.log("this is interval value", interval);
+      console.log("this is timer value in server (Pause is activated)", timer);
+      timer = timer - 1;
+    }, 1000);
+    return () => clearInterval(interval);
+  });
+  socket.on("Pause", (timer) => {
+    console.log("Game is paused!")
+    io.emit("PauseFromServer",timer);
+    clearInterval(interval);
+  });
   socket.on("gameEnd", () => {
     io.emit("gameEndFromServer");
     clearInterval(interval);
   });
   socket.on("gameEndByTrophy", () => {
-    io.emit("gameEndByTrophyFromServer");
+    socket.broadcast.emit("gameEndByTrophyFromServer");
     clearInterval(interval);
   });
   socket.on("SetScoreByTrophy", () => {
@@ -100,7 +132,7 @@ io.on("connection", (socket) => {
   });
   socket.on("gameReset", () => {
     clearInterval(interval);
-    io.emit("gameStartFromServer");
+    io.emit("gameStartFromServer2");
   });
   socket.on("disconnect", () => {
     socket.emit("gameStart", "stopTimer");
