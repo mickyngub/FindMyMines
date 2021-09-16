@@ -8,6 +8,7 @@ import HourglassEmptyIcon from "@material-ui/icons/HourglassEmpty";
 
 import "./Game.css";
 import bombPic from "../Pics/bombPic.png";
+import bombPic2 from "../Pics/bomb.png";
 import coin from "../Pics/coin.jpeg";
 import trophy from "../Pics/trophy.png";
 import timer from "../Pics/timer.jpg";
@@ -19,6 +20,7 @@ import { height } from "@material-ui/system";
 const Game = ({ ready, socket, nameFromServer, playerName }) => {
   let arrayBombValue = [];
   let opponentName = "";
+  let numberBomb = 6;
   //array to tell where the bomb is
   const [arrayRandom, setArrayRandom] = useState([]);
   const [gameStart, setGameStart] = useState(false);
@@ -33,6 +35,8 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
   //whether win or lose
   const [resultGame, setResultGame] = useState("");
   const [gameEnd, setGameEnd] = useState(false);
+  //numberOfBomb and setBomb
+  const [numBomb, setNumBomb] = useState(6);
 
   //get called once the start game button is clicked to generate where the bomb is
   const generateBomb = () => {
@@ -124,6 +128,8 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
     socket.emit("bombLocation", arrayRandom);
     setYourScore((prev) => prev + 1);
     socket.emit("plusScore");
+    setNumBomb((prev) => prev - 1);
+    socket.emit("showBomb");
     socket.emit("changeTurn");
     //If there are no value of 1 left in the array that means the game has ended
     if (arrayRandom.indexOf(1) === -1) {
@@ -154,8 +160,10 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
     setYourScore(20);
     setGameStart(false);
     setGameEnd(true);
-    socket.emit("gameEndBySurrender2");
-    setResultGame("You got the trophy. You won!!!");
+    setResultGame("You got the trophy, you won!!!");
+    socket.emit("gameEndByTrophy");
+    setNumBomb(6);
+    socket.emit("resetBomb");
   };
 
   const clearOldSession = () => {
@@ -171,6 +179,8 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
     setIsClicked(false);
     socket.emit("gameReset");
     generateBomb();
+    setNumBomb(6);
+    socket.emit("resetBomb");
   };
   const doubleTime = () => {
     socket.emit("DoubleTime");
@@ -179,9 +189,16 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
     setArrayRandom([]);
     setGameStart(false);
     setGameEnd(true);
-    setYourScore(-20);
+    setNumBomb(6);
+    socket.emit("resetBomb");
     socket.emit("gameEndBySurrender2");
     setResultGame("You lost by surrendering!!!");
+  };
+  const GamePause = (timer) => {
+    socket.emit("Pause", timer);
+  };
+  const GameResume = (timer) => {
+    socket.emit("Resume", timer);
   };
 
   socket.on("gameEndFromServer", () => {
@@ -193,13 +210,10 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
     setArrayRandom([]);
     setGameStart(false);
     setGameEnd(true);
+    setNumBomb(6);
+    socket.emit("resetBomb");
   });
-  socket.on("gameEndByTrophyFromServer", () => {
-    setResultGame("Your opponent got the trophy, you lost!!!");
-    setArrayRandom([]);
-    setGameStart(false);
-    setGameEnd(true);
-  });
+
   socket.on("SetScoreByTrophyFromServer", () => {
     setYourScore(0);
     setOpponentScore(1);
@@ -213,6 +227,14 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
     socket.on("timerFromServer", (timer) => {
       setClientTimer(timer);
       if (timer === 10) {
+        console.log("setPlayer");
+        setPlayer((prev) => !prev);
+        setIsClicked(false);
+      }
+    });
+    socket.on("timerFromServer2", (timer) => {
+      setClientTimer(timer);
+      if (timer === -1) {
         console.log("setPlayer");
         setPlayer((prev) => !prev);
         setIsClicked(false);
@@ -238,8 +260,20 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
     socket.on("deductScoreFromServer", () => {
       setOpponentScore((prev) => prev - 1);
     });
+    socket.on("deductNumBombFromServer", () => {
+      setNumBomb((prev) => prev - 1);
+    });
+    socket.on("resetBombFromServer", () => {
+      setNumBomb(6);
+    });
     socket.on("gameEndBySurrender2FromServer", () => {
       setResultGame("The opponent surrendered, You won!!!");
+      setArrayRandom([]);
+      setGameStart(false);
+      setGameEnd(true);
+    });
+    socket.on("gameEndByTrophyFromServer", () => {
+      setResultGame("Your opponent got the trophy, you lost!!!");
       setArrayRandom([]);
       setGameStart(false);
       setGameEnd(true);
@@ -268,6 +302,21 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
           >
             {opponentName}'s score {opponentScore}
           </span>
+          <div>
+            <img
+              className="pic"
+              style={{ height: "5%", width: "5%" }}
+              src={bombPic2}
+              alt="bombPic2"
+            ></img>
+            <span
+              className="showB"
+              style={{ fontWeight: "normal", fontSize: "2.5vh" }}
+            >
+              {" "}
+              {numBomb}
+            </span>
+          </div>
         </div>
       ) : (
         ""
@@ -292,7 +341,7 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
           {/* This is the array value of where the bomb, notbomb, and which grids have
         been clicked */}
           {/* !!This is a little buggy since if one players click the grid, it doesn't update the value in that player's screen until another player selected another grid!! */}
-          {arrayRandom}
+          {/*arrayRandom*/}
         </div>
         <div>
           {/* The grids are rendered based on the value in the array */}
@@ -446,28 +495,54 @@ const Game = ({ ready, socket, nameFromServer, playerName }) => {
         <div>
           <button
             className="buttong"
-            style={{ marginLeft: "-15%", minWidth: "9%", position: "absolute" }}
+            style={{ marginLeft: "-35%", minWidth: "9%", position: "absolute" }}
             onClick={clearByReset}
           >
             <span>reset</span>
           </button>
           <button
             className="buttong"
-            style={{ marginLeft: "-5%", minWidth: "14%", position: "absolute" }}
+            style={{
+              marginLeft: "-25%",
+              minWidth: "14%",
+              position: "absolute",
+            }}
             onClick={doubleTime}
           >
             <span>Time x2</span>
           </button>
           <button
             className="buttong"
-            style={{ marginLeft: "10%", minWidth: "14%", position: "absolute" }}
+            style={{
+              marginLeft: "-10%",
+              minWidth: "14%",
+              position: "absolute",
+            }}
             onClick={Surrender2}
           >
             Surrender
           </button>
+          <button
+            className="buttong"
+            style={{ marginLeft: "5%", minWidth: "14%", position: "absolute" }}
+            onClick={() => {
+              GameResume(clientTimer);
+            }}
+          >
+            Resume
+          </button>
+          <button
+            className="buttong"
+            style={{ marginLeft: "20%", minWidth: "14%", position: "absolute" }}
+            onClick={() => {
+              GamePause(clientTimer);
+            }}
+          >
+            Pause
+          </button>
         </div>
       </div>
-      <div>
+      <div className="text">
         {gameStart ? (
           <>
             <div>{player ? "Your turn" : "Opponent's turn"}</div>
